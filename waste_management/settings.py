@@ -27,9 +27,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-!vqtv4vivkw$!^^33nf+mv(mcu2na0vo3t2jrglm163mdqdyj&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'waste-management-django.onrender.com']
+
+# Allow all subdomains of Render and local development
+ALLOWED_HOSTS = [
+    'waste-management-mfuy.onrender.com',  # Your exact Render domain
+    '.onrender.com',                       # Allow ALL Render domains (flexibility)
+    'localhost',
+    '127.0.0.1',
+]
+
+# Optional: Dynamically allow Render's internal host (if needed)
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 
 # Application definition
