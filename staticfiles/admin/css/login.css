@@ -10,6 +10,10 @@
     padding: 15px 16px;
     justify-content: center;
 }
+.toggle-password {
+  z-index: 10;
+  cursor: pointer;
+}
 
 .login #header h1 {
     font-size: 1.125rem;

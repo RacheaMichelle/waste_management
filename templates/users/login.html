@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="min-h-screen flex items-center justify-center bg-gray-100">
   <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
     <h2 class="text-2xl font-bold mb-6 text-center text-green-700">Login</h2>
 
-    {% if error %}
-      <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-        {{ error }}
-      </div>
+    {% if messages %}
+      {% for message in messages %}
+        <div class="mb-4 p-3 rounded text-white {% if message.tags == 'success' %}bg-green-500{% else %}bg-red-500{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
     {% endif %}
 
     <form method="post" class="space-y-4">
@@ -20,10 +23,23 @@
                class="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500">
       </div>
 
-      <div>
+      <div class="relative">
         <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
         <input type="password" name="password" id="password" required
                class="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+        <button type="button" class="toggle-password absolute right-3 top-8 text-gray-500 hover:text-gray-700">
+          <i class="far fa-eye"></i>
+        </button>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+          <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+        </div>
+        <div class="text-sm">
+          <a href="{% url 'password_reset' %}" class="font-medium text-green-600 hover:text-green-500">Forgot password?</a>
+        </div>
       </div>
 
       <div class="mt-6">
@@ -34,4 +50,60 @@
     </form>
   </div>
 </div>
+
+<!-- Font Awesome CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" 
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<!-- Inline JavaScript as primary solution -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers to all eye icons
+    document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function() {
+            const input = this.previousElementSibling;
+            const icon = this.querySelector('i');
+            
+            // Toggle input type
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+                icon.setAttribute('title', 'Hide password');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+                icon.setAttribute('title', 'Show password');
+            }
+            
+            // Keep focus on input for better UX
+            input.focus();
+        });
+    });
+});
+</script>
+
+<!-- Fallback to external JS file -->
+<script src="{% static 'js/password_validation.js' %}"></script>
+
+<style>
+    /* Ensure the eye icon is clickable and properly positioned */
+    .toggle-password {
+        background: none;
+        border: none;
+        cursor: pointer;
+        position: absolute;
+        right: 10px;
+        top: 33px;
+        padding: 5px;
+        z-index: 10;
+    }
+    .toggle-password:hover {
+        color: #4b5563; /* gray-700 */
+    }
+    .toggle-password:focus {
+        outline: none;
+        ring: 2px solid #10b981; /* green-500 */
+    }
+</style>
 {% endblock %}
