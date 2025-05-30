@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegisterForm
+from django.contrib import messages
+from .forms import UserRegisterForm, QuickRegisterForm
 from .models import Profile
-from .forms import QuickRegisterForm
 
 def register(request):
     if request.method == 'POST':
@@ -14,6 +14,7 @@ def register(request):
             location = form.cleaned_data['location']
             contact = form.cleaned_data['contact']
             accepted_waste_types = ','.join(form.cleaned_data.get('accepted_waste_types', []))
+            
             profile = Profile(
                 user=user,
                 user_type=user_type,
@@ -22,22 +23,25 @@ def register(request):
                 accepted_waste_types=accepted_waste_types
             )
             profile.save()
+            
             login(request, user)
-            return redirect('/')  # Temporary redirect to root
+            messages.success(request, 'Account created successfully!')
+            return redirect('profile')
     else:
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
+
 @login_required
 def profile(request):
-    is_quick_access = False
     try:
-        if request.user.profile.user_type == 'quick_access':
-            is_quick_access = True
+        profile = request.user.profile
+        is_quick_access = profile.user_type == 'quick_access'
     except Profile.DoesNotExist:
-        pass
+        profile = None
+        is_quick_access = False
 
     return render(request, 'users/profile.html', {
-        'profile': request.user.profile,
+        'profile': profile,
         'is_quick_access': is_quick_access,
     })
 
@@ -47,37 +51,32 @@ def user_login(request):
         password = request.POST.get('password', '').strip()
 
         if not username or not password:
-            return render(request, 'users/login.html', {'error': 'Username and password are required.'})
+            messages.error(request, 'Username and password are required.')
+            return render(request, 'users/login.html')
 
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
             if user.is_active:
                 login(request, user)
-
-                # Redirect quick access users to their dashboard
                 try:
                     if user.profile.user_type == 'quick_access':
                         return redirect('quick_dashboard')
                 except Profile.DoesNotExist:
-                    pass  # No profile; proceed to next_url or default
+                    pass
 
-                # Continue with normal redirect
-                next_url = request.GET.get('next', '/')
+                next_url = request.GET.get('next', 'profile')
                 return redirect(next_url)
             else:
-                return render(request, 'users/login.html', {'error': 'Account is disabled.'})
+                messages.error(request, 'Account is disabled.')
         else:
-            return render(request, 'users/login.html', {'error': 'Invalid credentials'})
-
-    else:
-        next_url = request.GET.get('next', '/')
-        return render(request, 'users/login.html', {'next': next_url})
+            messages.error(request, 'Invalid credentials')
+    return render(request, 'users/login.html')
 
 def user_logout(request):
     logout(request)
-    return redirect('home')  # Ensure 'home' is defined in URLs
-
+    messages.success(request, 'You have been logged out.')
+    return redirect('home')
 
 def quick_register(request):
     if request.method == 'POST':
@@ -85,8 +84,7 @@ def quick_register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-
-            # Redirect to quick dashboard for quick access users
+            messages.success(request, 'Quick account created!')
             return redirect('quick_dashboard')
     else:
         form = QuickRegisterForm()
@@ -94,14 +92,14 @@ def quick_register(request):
 
 @login_required
 def quick_dashboard(request):
-    # For quick dashboard, user is definitely quick_access, but check anyway
-    is_quick_access = False
     try:
-        if request.user.profile.user_type == 'quick_access':
-            is_quick_access = True
+        is_quick_access = request.user.profile.user_type == 'quick_access'
     except Profile.DoesNotExist:
-        pass
-
+        is_quick_access = False
+        
+    if not is_quick_access:
+        return redirect('profile')
+        
     return render(request, 'users/quick_dashboard.html', {
         'is_quick_access': is_quick_access,
     })

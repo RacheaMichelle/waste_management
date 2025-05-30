@@ -1,35 +1,66 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+<div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-100">
     <div class="text-center mb-8">
         <h1 class="text-3xl font-bold text-green-700 mb-2">Report Illegal Dumping</h1>
         <p class="text-gray-600">Help keep Uganda clean by reporting illegal waste disposal</p>
     </div>
-    
-    <form method="post" enctype="multipart/form-data" novalidate class="space-y-6">
-        {% csrf_token %}
-        
-        <!-- Photo Upload -->
-        <div class="space-y-2">
-            <label class="block text-lg font-medium text-gray-700">Photo Evidence</label>
-            <div class="flex items-center justify-center w-full">
-                <label class="flex flex-col w-full h-32 border-4 border-dashed border-green-300 hover:border-green-500 hover:bg-green-50 rounded-lg transition-all cursor-pointer">
-                    <div class="flex flex-col items-center justify-center pt-7">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                        </svg>
-                        <p class="pt-1 text-sm text-gray-600">Upload photo evidence</p>
-                    </div>
-                    <input id="id_photo" type="file" name="photo" accept="image/*" class="opacity-0" required>
-                </label>
-            </div>
-            {% if form.photo.errors %}
-                <p class="text-red-500 text-sm">{{ form.photo.errors.0 }}</p>
+
+    {% if messages %}
+    <div class="mb-6">
+        {% for message in messages %}
+        <div class="p-4 flex items-center space-x-2 rounded-lg {% if message.tags == 'success' %}bg-green-100 text-green-800{% elif message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+            {% if message.tags == 'success' %}
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+            {% elif message.tags == 'error' %}
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
             {% endif %}
+            <span>{{ message }}</span>
         </div>
-        
-        <!-- Waste Type -->
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" novalidate class="space-y-6" id="reportForm">
+        {% csrf_token %}
+
+        <div class="space-y-2">
+            <label class="block text-lg font-medium text-gray-700">Photo Evidence <span class="text-red-500">*</span></label>
+            <label id="upload-container" class="flex flex-col w-full h-32 border-4 border-dashed border-green-300 hover:border-green-500 hover:bg-green-50 rounded-lg transition-all cursor-pointer">
+                <div id="upload-content" class="flex flex-col items-center justify-center pt-7">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p class="pt-1 text-sm text-gray-600">Upload photo evidence (max 5MB)</p>
+                </div>
+                <input id="id_photo" type="file" name="photo" accept="image/*" class="opacity-0" required>
+            </label>
+            <div id="image-preview" class="hidden mt-4">
+                <div class="relative">
+                    <img id="preview-image" src="#" alt="Preview" class="max-h-64 w-auto rounded-lg border border-gray-200">
+                    <button type="button" id="remove-image" class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+                <p class="text-green-600 text-sm mt-2 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    Image ready for upload
+                </p>
+                <p id="file-info" class="text-xs text-gray-500 mt-1"></p>
+            </div>
+        </div>
+
+              <!-- Waste Type -->
         <div class="space-y-2">
             <label for="id_waste_type" class="block text-lg font-medium text-gray-700">Waste Type</label>
             <select id="id_waste_type" name="waste_type" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
@@ -58,26 +89,15 @@
             <textarea id="id_description" name="description" rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">{% if form.description.value %}{{ form.description.value }}{% endif %}</textarea>
         </div>
         
-        <!-- Map -->
         <div class="space-y-2">
-            <label class="block text-lg font-medium text-gray-700">Select Location on Map</label>
+            <label class="block text-lg font-medium text-gray-700">Select Location on Map <span class="text-red-500">*</span></label>
             <div id="map" class="h-80 w-full rounded-xl border-2 border-green-300 bg-gray-50"></div>
-            <input type="hidden" name="latitude" id="id_latitude" value="{% if form.latitude.value %}{{ form.latitude.value }}{% endif %}" required>
-            <input type="hidden" name="longitude" id="id_longitude" value="{% if form.longitude.value %}{{ form.longitude.value }}{% endif %}" required>
-            <p id="location-feedback" class="text-sm text-gray-500 italic">
-                {% if form.latitude.value and form.longitude.value %}
-                    Current location: {{ form.latitude.value }}, {{ form.longitude.value }}
-                {% else %}
-                    Click on the map to select location
-                {% endif %}
-            </p>
-            {% if form.latitude.errors or form.longitude.errors %}
-                <p class="text-red-500 text-sm">Please select a location on the map</p>
-            {% endif %}
+            {{ form.latitude }}
+            {{ form.longitude }}
+            <p id="location-feedback" class="text-sm text-gray-500 italic">Click on the map to select location</p>
         </div>
-        
-        <!-- Submit Button -->
-        <button type="submit" class="w-full py-3 px-6 bg-green-600 hover:bg-green-700 text-white font-bold text-lg rounded-lg shadow-md transition-all transform hover:scale-[1.01]">
+
+        <button type="submit" class="w-full py-3 px-6 bg-green-600 hover:bg-green-700 active:scale-95 text-white font-bold text-lg rounded-lg shadow-md transition-all duration-200 transform hover:scale-105">
             Submit Report
         </button>
     </form>
@@ -88,42 +108,72 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const photoInput = document.getElementById('id_photo');
+    const previewContainer = document.getElementById('image-preview');
+    const previewImage = document.getElementById('preview-image');
+    const uploadContent = document.getElementById('upload-content');
+    const uploadContainer = document.getElementById('upload-container');
+    const removeButton = document.getElementById('remove-image');
+    const fileInfo = document.getElementById('file-info');
+
+    photoInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            const file = this.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                previewImage.alt = `Preview of uploaded image: ${file.name}`;
+                previewContainer.classList.remove('hidden');
+                uploadContent.classList.add('hidden');
+                uploadContainer.classList.remove('h-32');
+                uploadContainer.classList.add('h-20');
+                fileInfo.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    removeButton.addEventListener('click', function() {
+        photoInput.value = '';
+        previewContainer.classList.add('hidden');
+        uploadContent.classList.remove('hidden');
+        uploadContainer.classList.remove('h-20');
+        uploadContainer.classList.add('h-32');
+        fileInfo.textContent = '';
+    });
+
     const map = L.map('map').setView([1.3733, 32.2903], 7);
-    
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
     let marker;
-    
-    const initialLat = parseFloat(document.getElementById('id_latitude').value);
-    const initialLng = parseFloat(document.getElementById('id_longitude').value);
-    
+    const initialLat = parseFloat("{{ form.latitude.value|default:0 }}");
+    const initialLng = parseFloat("{{ form.longitude.value|default:0 }}");
+
     if (initialLat && initialLng) {
         marker = L.marker([initialLat, initialLng]).addTo(map);
         map.setView([initialLat, initialLng], 12);
     }
-    
+
     map.on('click', function(e) {
-        if (marker) {
-            map.removeLayer(marker);
-        }
+        if (marker) map.removeLayer(marker);
         marker = L.marker(e.latlng).addTo(map);
         document.getElementById('id_latitude').value = e.latlng.lat.toFixed(6);
         document.getElementById('id_longitude').value = e.latlng.lng.toFixed(6);
-        document.getElementById('location-feedback').textContent = 
-            `Selected location: ${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}`;
+        document.getElementById('location-feedback').textContent = `Selected location: ${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}`;
+        document.getElementById('location-feedback').className = 'text-sm text-gray-500 italic';
     });
 });
 </script>
 
 <style>
-    .leaflet-container {
-        z-index: 0;
+    .leaflet-container { z-index: 0; }
+    input[type="file"] { height: 0; width: 0; }
+    #id_waste_type, #id_district, #id_description {
+        @apply block w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition;
     }
-    input[type="file"] {
-        height: 0;
-        width: 0;
-    }
+    #id_description { @apply min-h-[120px]; }
 </style>
 {% endblock %}

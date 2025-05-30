@@ -46,6 +46,5 @@ htmlcov/
 .tox/
 .pytest_cache/
 
-# Others
-*.sqlite3
+
 .idea/
