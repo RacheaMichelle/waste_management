@@ -17,10 +17,7 @@ VENV/
 # VSCode
 .vscode/
 
-# Django
-db.sqlite3
-/staticfiles/
-media/
+
 
 # Logs
 *.log
