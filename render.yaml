@@ -3,9 +3,18 @@ services:
     name: waste-management
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn waste_management.wsgi:application"
+    startCommand: "daphne waste_management.asgi:application"
     envVars:
       - key: DJANGO_SECRET_KEY
         generateValue: true
       - key: DEBUG
         value: False
+      - key: REDIS_URL
+        fromService:
+          name: waste-redis
+          type: redis
+          property: connectionString
+
+  - type: redis
+    name: waste-redis
+    ipAllowList: [] # publicly accessible if empty

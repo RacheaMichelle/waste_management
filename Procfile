@@ -1,1 +1,1 @@
-web: gunicorn waste_management.wsgi --log-file -
+web: daphne waste_management.wsgi --log-file -

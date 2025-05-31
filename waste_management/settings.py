@@ -15,6 +15,7 @@ import os
 import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379')
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,6 +31,8 @@ SECRET_KEY = 'django-insecure-!vqtv4vivkw$!^^33nf+mv(mcu2na0vo3t2jrglm163mdqdyj&
 DEBUG = False
 
 
+
+
 # Allow all subdomains of Render and local development
 ALLOWED_HOSTS = [
     'waste-management-mfuy.onrender.com',  # Your exact Render domain
@@ -42,16 +45,20 @@ ALLOWED_HOSTS = [
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+    
+
+ASGI_APPLICATION = 'waste_management.asgi.application'
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.messages',
+    'django.contrib.messages', 
     'django.contrib.staticfiles',
     'users',
     'waste',
@@ -61,6 +68,8 @@ INSTALLED_APPS = [
     'educ',
     'report',
     'widget_tweaks',
+    "channels",
+    
 
 ]
 
@@ -165,6 +174,7 @@ STATIC_URL = '/static/'
 # During development only
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
+    'static/logo.jpg',
 ]
 
 
@@ -211,3 +221,13 @@ LOGGING = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [REDIS_URL],
+        },
+    },
+}
+
