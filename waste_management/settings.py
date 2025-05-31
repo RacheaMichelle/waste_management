@@ -220,7 +220,7 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
             "hosts": [{
-                "address": "rediss://default:AXIrAAIjcDE2ZGY1YTlmNTYxMTU0YWM0OWM1MTVlYTM4YTI0YjQwM3AxMA@valid-oaffish-29227.upstash.io:6379",
+                "address": "rediss://default:AXIrAAIjcDE2ZGY1YTlmNTYxMTU0YWM0OWM1MTVlYTM4YTI0YjQwM3AxMA@valid-oarfish-29227.upstash.io:6379",
                 "ssl_cert_reqs": None  # Disables SSL verification
             }],
         },
