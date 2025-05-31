@@ -40,7 +40,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
 ]
-
+CSRF_TRUSTED_ORIGINS = ['https://waste-management-mfuy.onrender.com']
 # Optional: Dynamically allow Render's internal host (if needed)
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
@@ -170,17 +170,8 @@ USE_TZ = True
 # settings.py
 
 STATIC_URL = '/static/'
-
-# During development only
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-    'static/logo.jpg',
-]
-
-
-# Add this line to fix the error:
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  
-# For production
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 
 
