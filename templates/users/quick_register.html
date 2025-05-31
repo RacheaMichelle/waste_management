@@ -3,87 +3,203 @@
 {% load static %}
 
 {% block content %}
-<div class="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-  <div class="w-full max-w-lg bg-white p-10 rounded-2xl shadow-xl ring-1 ring-gray-200">
-    <h2 class="text-3xl font-extrabold text-center text-green-700 mb-8">Quick Register</h2>
-
-    {% if messages %}
-      {% for message in messages %}
-        <div class="mb-4 p-3 rounded text-white {% if message.tags == 'success' %}bg-green-500{% else %}bg-red-500{% endif %}">
-          {{ message }}
-        </div>
-      {% endfor %}
-    {% endif %}
-
-    <form method="post" novalidate class="space-y-6" id="quickRegisterForm">
-      {% csrf_token %}
-
-      {% if form.errors %}
-        <div class="bg-red-100 text-red-700 p-4 rounded">
-          {% for field, errors in form.errors.items %}
-            {% for error in errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-gray-50 flex items-center justify-center p-4 sm:p-6">
+  <div class="w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden">
+    <!-- Decorative header -->
+    <div class="bg-gradient-to-r from-green-600 to-green-500 py-5 px-6 text-center">
+      <h2 class="text-3xl font-extrabold text-white">Quick Registration</h2>
+      <p class="mt-2 text-green-100">Get started in just a few seconds</p>
+    </div>
+    
+    <div class="p-8 sm:p-10">
+      <!-- Messages/Alerts -->
+      {% if messages %}
+        <div class="mb-6 space-y-3">
+          {% for message in messages %}
+            <div class="p-3 rounded-lg text-white text-sm font-medium flex items-center
+              {% if message.tags == 'success' %}bg-green-500{% else %}bg-red-500{% endif %}">
+              <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} mr-2"></i>
+              {{ message }}
+            </div>
           {% endfor %}
         </div>
       {% endif %}
 
-      <div>
-        <label for="id_username" class="block text-sm font-medium text-gray-700">Username</label>
-        {{ form.username|add_class:"mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500" }}
-      </div>
+      <form method="post" class="space-y-6" id="quickRegisterForm">
+        {% csrf_token %}
 
-      <div class="relative">
-        <label for="id_password1" class="block text-sm font-medium text-gray-700">Password</label>
-        {{ form.password1|add_class:"mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500" }}
-        <button type="button" class="absolute right-3 top-8 text-gray-500 hover:text-gray-700" onclick="togglePassword(this)">
-          <i class="far fa-eye"></i>
-        </button>
-        <div class="text-xs text-gray-500 mt-1">{{ form.password1.help_text|safe }}</div>
-      </div>
-
-      <div class="relative">
-        <label for="id_password2" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-        {{ form.password2|add_class:"mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500" }}
-        <button type="button" class="absolute right-3 top-8 text-gray-500 hover:text-gray-700" onclick="togglePassword(this)">
-          <i class="far fa-eye"></i>
-        </button>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">User Type</label>
-        <div class="space-y-2">
-          {% for choice in form.user_type %}
+        <!-- Form Errors -->
+        {% if form.errors %}
+          <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg mb-6">
             <div class="flex items-center">
-              {{ choice.tag }}
-              <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-700">
-                {{ choice.choice_label }}  Please select (Quick Access)
-              </label>
+              <i class="fas fa-exclamation-circle text-red-500 mr-2"></i>
+              <h3 class="text-sm font-medium text-red-800">Please correct these errors</h3>
             </div>
-          {% endfor %}
+            <div class="mt-2 text-sm text-red-700 space-y-1">
+              {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        <!-- Username -->
+        <div class="space-y-1">
+          <label for="id_username" class="block text-sm font-medium text-gray-700">Username</label>
+          <div class="relative">
+            {{ form.username|add_class:"block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150" }}
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <i class="far fa-user text-gray-400"></i>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div>
-        <label for="id_location" class="block text-sm font-medium text-gray-700">Location</label>
-        {{ form.location|add_class:"mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500" }}
-      </div>
+        <!-- Password -->
+        <div class="space-y-1">
+          <label for="id_password1" class="block text-sm font-medium text-gray-700">Password</label>
+          <div class="relative">
+            {{ form.password1|add_class:"block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150" }}
+            <button type="button" class="absolute right-3 top-3.5 text-gray-400 hover:text-green-500 transition" onclick="togglePassword(this)">
+              <i class="far fa-eye"></i>
+            </button>
+          </div>
+          <div class="text-xs text-gray-500 mt-2">{{ form.password1.help_text|safe }}</div>
+          
+          <!-- Password Strength -->
+          <div class="password-strength mt-3">
+            <div class="flex justify-between mb-1">
+              <span class="text-xs font-medium text-gray-500 strength-text">Password strength</span>
+              <span class="text-xs font-medium strength-percentage">0%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-1.5">
+              <div class="bg-red-500 h-1.5 rounded-full strength-bar" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
 
-      <div>
-        <label for="id_contact" class="block text-sm font-medium text-gray-700">Contact</label>
-        {{ form.contact|add_class:"mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500" }}
-        <p class="text-xs text-gray-500 mt-1">Phone number in format: +256XXXXXXXXX</p>
-      </div>
+        <!-- Confirm Password -->
+        <div class="space-y-1">
+          <label for="id_password2" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+          <div class="relative">
+            {{ form.password2|add_class:"block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150" }}
+            <button type="button" class="absolute right-3 top-3.5 text-gray-400 hover:text-green-500 transition" onclick="togglePassword(this)">
+              <i class="far fa-eye"></i>
+            </button>
+          </div>
+        </div>
 
-      <div>
-        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition duration-200">
-          Register
-        </button>
-      </div>
-    </form>
+        <!-- User Type -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">User Type (Select Quick Access only)</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {% for choice in form.user_type %} 
+              <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition has-[:checked]:border-green-500 has-[:checked]:bg-green-50">
+                {{ choice.tag }}
+                <span class="ml-3 block text-sm font-medium text-gray-700"> 
+                  {{ choice.choice_label }}
+                  <span class="block text-xs text-gray-500 mt-1"></span>
+                </span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="space-y-1">
+          <label for="id_location" class="block text-sm font-medium text-gray-700">Location</label>
+          <div class="relative">
+            {{ form.location|add_class:"block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150" }}
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <i class="fas fa-map-marker-alt text-gray-400"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="space-y-1">
+          <label for="id_contact" class="block text-sm font-medium text-gray-700">Contact</label>
+          <div class="relative">
+            {{ form.contact|add_class:"block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150" }}
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <i class="fas fa-phone text-gray-400"></i>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">Phone number format: +256XXXXXXXXX</p>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-4">
+          <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-bold py-4 px-4 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+            Complete Registration
+            <i class="fas fa-arrow-right ml-2"></i>
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
-<script src="{% static 'js/password_validation.js' %}"></script>
+<!-- Styles & Scripts -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="{% static 'js/password_validation.js' %}"></script>
+<script>
+// Password toggle functionality
+function togglePassword(button) {
+  const input = button.previousElementSibling;
+  const icon = button.querySelector('i');
+  
+  if (input.type === "password") {
+    input.type = "text";
+    icon.classList.replace('fa-eye', 'fa-eye-slash');
+    button.classList.replace('text-gray-400', 'text-green-500');
+  } else {
+    input.type = "password";
+    icon.classList.replace('fa-eye-slash', 'fa-eye');
+    button.classList.replace('text-green-500', 'text-gray-400');
+  }
+}
+
+// Password strength indicator
+document.addEventListener('DOMContentLoaded', function() {
+  const passwordInput = document.getElementById('id_password1');
+  if (passwordInput) {
+    passwordInput.addEventListener('input', function() {
+      const strengthBar = document.querySelector('.strength-bar');
+      const strengthText = document.querySelector('.strength-text');
+      const strengthPercentage = document.querySelector('.strength-percentage');
+      
+      const password = this.value;
+      let strength = 0;
+      
+      // Length check
+      if (password.length >= 8) strength += 25;
+      if (password.length >= 12) strength += 25;
+      
+      // Complexity checks
+      if (/[A-Z]/.test(password)) strength += 15;
+      if (/[0-9]/.test(password)) strength += 15;
+      if (/[^A-Za-z0-9]/.test(password)) strength += 20;
+      
+      strength = Math.min(100, Math.max(0, strength));
+      
+      // Update UI
+      strengthBar.style.width = `${strength}%`;
+      strengthPercentage.textContent = `${strength}%`;
+      
+      if (strength < 40) {
+        strengthBar.className = 'bg-red-500 h-1.5 rounded-full strength-bar';
+        strengthText.textContent = 'Weak';
+      } else if (strength < 70) {
+        strengthBar.className = 'bg-yellow-500 h-1.5 rounded-full strength-bar';
+        strengthText.textContent = 'Medium';
+      } else {
+        strengthBar.className = 'bg-green-500 h-1.5 rounded-full strength-bar';
+        strengthText.textContent = 'Strong';
+      }
+    });
+  }
+});
+</script>
 {% endblock %}

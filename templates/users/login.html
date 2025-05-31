@@ -2,34 +2,51 @@
 {% load static %}
 
 {% block content %}
-<div class="min-h-screen flex items-center justify-center bg-gray-100">
-  <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold mb-6 text-center text-green-700">Login</h2>
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
+  <div class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
+    <div class="flex justify-center mb-6">
+      
+    </div>
+    
+    <h2 class="text-3xl font-extrabold mb-2 text-center text-gray-800">Welcome back</h2>
+    <p class="text-center text-gray-500 mb-8">Sign in to your account</p>
 
     {% if messages %}
       {% for message in messages %}
-        <div class="mb-4 p-3 rounded text-white {% if message.tags == 'success' %}bg-green-500{% else %}bg-red-500{% endif %}">
+        <div class="mb-4 p-3 rounded-lg text-white text-center {% if message.tags == 'success' %}bg-green-500{% else %}bg-red-500{% endif %}">
           {{ message }}
         </div>
       {% endfor %}
     {% endif %}
 
-    <form method="post" class="space-y-4">
+    <form method="post" class="space-y-5">
       {% csrf_token %}
 
-      <div>
+      <div class="space-y-1">
         <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-        <input type="text" name="username" id="username" required
-               class="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="far fa-user text-gray-400"></i>
+          </div>
+          <input type="text" name="username" id="username" required
+                 class="pl-10 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
+                 placeholder="Enter your username">
+        </div>
       </div>
 
-      <div class="relative">
+      <div class="space-y-1">
         <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-        <input type="password" name="password" id="password" required
-               class="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500">
-        <button type="button" class="toggle-password absolute right-3 top-8 text-gray-500 hover:text-gray-700">
-          <i class="far fa-eye"></i>
-        </button>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="far fa-lock text-gray-400"></i>
+          </div>
+          <input type="password" name="password" id="password" required
+                 class="pl-10 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
+                 placeholder="Enter your password">
+          <button type="button" class="absolute right-3 top-3 text-gray-400 hover:text-gray-600 focus:outline-none" onclick="togglePassword(this)">
+            <i class="far fa-eye"></i>
+          </button>
+        </div>
       </div>
 
       <div class="flex items-center justify-between">
@@ -38,72 +55,69 @@
           <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
         </div>
         <div class="text-sm">
-          <a href="{% url 'password_reset' %}" class="font-medium text-green-600 hover:text-green-500">Forgot password?</a>
+          <a href="{% url 'password_reset' %}" class="font-medium text-green-600 hover:text-green-500 transition duration-200">Forgot password?</a>
         </div>
       </div>
 
-      <div class="mt-6">
-        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg">
-          Login
+      <div>
+        <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition duration-200 transform hover:-translate-y-0.5">
+          Sign In
         </button>
       </div>
     </form>
+
+    <div class="mt-6">
+      <div class="relative">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-gray-300"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-2 bg-white text-gray-500">Or continue with</span>
+        </div>
+      </div>
+
+      <div class="mt-6 grid grid-cols-2 gap-3">
+        <a href="#" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-200">
+          <i class="fab fa-google text-red-500 mt-1 mr-2"></i> Google
+        </a>
+        <a href="#" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-200">
+          <i class="fab fa-facebook-f text-blue-600 mt-1 mr-2"></i> Facebook
+        </a>
+      </div>
+    </div>
+
+    <p class="mt-6 text-center text-sm text-gray-600">
+      Don't have an account?
+      <a href="{% url 'register' %}" class="font-medium text-green-600 hover:text-green-500 transition duration-200">Sign up</a>
+    </p>
   </div>
 </div>
 
 <!-- Font Awesome CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
-      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" 
-      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- Inline JavaScript as primary solution -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Add click handlers to all eye icons
-    document.querySelectorAll('.toggle-password').forEach(button => {
-        button.addEventListener('click', function() {
-            const input = this.previousElementSibling;
-            const icon = this.querySelector('i');
-            
-            // Toggle input type
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.replace('fa-eye', 'fa-eye-slash');
-                icon.setAttribute('title', 'Hide password');
-            } else {
-                input.type = 'password';
-                icon.classList.replace('fa-eye-slash', 'fa-eye');
-                icon.setAttribute('title', 'Show password');
-            }
-            
-            // Keep focus on input for better UX
-            input.focus();
-        });
-    });
-});
+function togglePassword(button) {
+  const input = button.parentElement.querySelector('input');
+  const icon = button.querySelector('i');
+  
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.classList.replace('fa-eye', 'fa-eye-slash');
+  } else {
+    input.type = 'password';
+    icon.classList.replace('fa-eye-slash', 'fa-eye');
+  }
+}
 </script>
 
-<!-- Fallback to external JS file -->
-<script src="{% static 'js/password_validation.js' %}"></script>
-
 <style>
-    /* Ensure the eye icon is clickable and properly positioned */
-    .toggle-password {
-        background: none;
-        border: none;
-        cursor: pointer;
-        position: absolute;
-        right: 10px;
-        top: 33px;
-        padding: 5px;
-        z-index: 10;
-    }
-    .toggle-password:hover {
-        color: #4b5563; /* gray-700 */
-    }
-    .toggle-password:focus {
-        outline: none;
-        ring: 2px solid #10b981; /* green-500 */
-    }
+  input:focus {
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  }
+  button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+  }
 </style>
 {% endblock %}
