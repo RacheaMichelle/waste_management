@@ -214,14 +214,13 @@ LOGGING = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # settings.py
+# settings.py
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [{
-                "address": "redis-cli --tls -u redis://default:AXIrAAIjcDE2ZGY1YTlmNTYxMTU0YWM0OWM1MTVlYTM4YTI0YjQwM3AxMA@valid-oarfish-29227.upstash.io:6379",  # Note "rediss://"
-                "ssl_cert_reqs": None  # Disables certificate verification
-            }],
+            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
+            "ssl": os.environ.get('REDIS_SSL', 'false').lower() == 'true',
         },
     },
 }
