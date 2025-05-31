@@ -178,7 +178,11 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 TIME_ZONE = 'Africa/Nairobi'  # EAT is UTC+3, and Africa/Nairobi corresponds to this timezone
 USE_TZ = True
 
