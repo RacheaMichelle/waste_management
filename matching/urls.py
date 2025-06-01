@@ -1,7 +1,5 @@
 from django.urls import path
-from . import views
-from django.conf import settings
-from django.conf.urls.static import static
+
 
 urlpatterns = [
     # Matches page (for listing matched waste notifications)
@@ -20,6 +18,3 @@ urlpatterns = [
     path('notifications/clear/', views.clear_all_notifications, name='clear_all_notifications'),
 ]
 
-# Add static media serving during development
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
