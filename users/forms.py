@@ -53,8 +53,10 @@ class UserRegisterForm(UserCreationForm):
         if user_type in ['collector', 'recycler']:
             if not cleaned_data.get('contact'):
                 self.add_error('contact', "Contact information is required for collectors/recyclers")
+            
+            # Check if at least one waste type is selected
             if not cleaned_data.get('accepted_waste_types'):
-                self.add_error('accepted_waste_types', "At least one waste type must be selected")
+                self.add_error('accepted_waste_types', "Please select at least one waste type you collect/produce")
         
         return cleaned_data
 
