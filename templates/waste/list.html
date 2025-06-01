@@ -133,7 +133,7 @@
     </form>
 </div>
 
-<!-- List of current user's waste listings -->
+<!-- In your listings section -->
 <div class="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
     <h3 class="text-xl font-semibold mb-4 text-green-700">Your Listings</h3>
     {% for listing in listings %}
@@ -145,9 +145,20 @@
             {% if listing.image %}
                 <img src="{{ listing.image.url }}" alt="Waste Image" class="mt-2 rounded-lg max-w-sm border shadow">
             {% endif %}
+            
+            <div class="flex space-x-2 mt-3">
+                <a href="{% url 'waste_update' listing.pk %}" 
+                   class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                    Edit
+                </a>
+                <a href="{% url 'waste_delete' listing.pk %}" 
+                   class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                    Delete
+                </a>
+            </div>
         </div>
     {% empty %}
-        <p>No listings created yet.</p>
+        <p class="text-gray-500">No listings created yet.</p>
     {% endfor %}
 </div>
 {% endblock %}

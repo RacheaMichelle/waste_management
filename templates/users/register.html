@@ -141,26 +141,38 @@ function togglePassword(button) {
   }
 }
 
-// Make contact and waste types required for collectors/recyclers
+// Make contact required and validate at least one waste type for collectors/recyclers
 document.addEventListener('DOMContentLoaded', function() {
   const userTypeRadios = document.querySelectorAll('input[name="user_type"]');
   const contactField = document.getElementById('id_contact');
   const wasteTypeCheckboxes = document.querySelectorAll('input[name="accepted_waste_types"]');
+  const wasteTypeContainer = document.querySelector('[for^="id_accepted_waste_types"]').parentElement;
   
   function checkRequirements() {
     const selectedType = document.querySelector('input[name="user_type"]:checked').value;
+    
     if (selectedType === 'collector' || selectedType === 'recycler') {
       contactField.required = true;
-      wasteTypeCheckboxes.forEach(checkbox => {
-        checkbox.required = true;
-      });
+      // Highlight waste types as required (but don't make individual checkboxes required)
+      wasteTypeContainer.classList.add('required-field');
     } else {
       contactField.required = false;
-      wasteTypeCheckboxes.forEach(checkbox => {
-        checkbox.required = false;
-      });
+      wasteTypeContainer.classList.remove('required-field');
     }
   }
+  
+  // Add validation before form submission
+  const form = document.querySelector('form');
+  form.addEventListener('submit', function(e) {
+    const selectedType = document.querySelector('input[name="user_type"]:checked').value;
+    const checkedWasteTypes = document.querySelectorAll('input[name="accepted_waste_types"]:checked').length;
+    
+    if ((selectedType === 'collector' || selectedType === 'recycler') && checkedWasteTypes === 0) {
+      e.preventDefault();
+      alert('Please select at least one waste type you collect/produce');
+      return false;
+    }
+  });
   
   userTypeRadios.forEach(radio => {
     radio.addEventListener('change', checkRequirements);
