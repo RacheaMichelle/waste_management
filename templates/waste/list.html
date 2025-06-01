@@ -100,12 +100,12 @@
         {% csrf_token %}
         
         <div class="form-group">
-            <label for="id_waste_type" class="block mb-2 font-semibold text-gray-700">Waste Type:</label>
+            <label for="id_waste_type">Waste Type:</label>
             {{ form.waste_type }}
         </div>
         
         <div class="form-group">
-            <label for="id_quantity" class="block mb-2 font-semibold text-gray-700">Quantity:</label>
+            <label for="id_quantity">Quantity:</label>
             {{ form.quantity }}
             {% if form.quantity.errors %}
                 <div class="text-red-600 mt-1 text-sm">{{ form.quantity.errors }}</div>
@@ -113,17 +113,17 @@
         </div>
         
         <div class="form-group">
-            <label for="id_description" class="block mb-2 font-semibold text-gray-700">Description:</label>
+            <label for="id_description">Description:</label>
             {{ form.description }}
         </div>
         
         <div class="form-group">
-            <label for="id_location" class="block mb-2 font-semibold text-gray-700">Location:</label>
+            <label for="id_location">Location:</label>
             {{ form.location }}
         </div>
         
         <div class="form-group">
-            <label for="id_image" class="block mb-2 font-semibold text-gray-700">Image (optional):</label>
+            <label for="id_image">Image (optional):</label>
             {{ form.image }}
         </div>
         
@@ -131,5 +131,23 @@
             Create Listing
         </button>
     </form>
+</div>
+
+<!-- List of current user's waste listings -->
+<div class="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+    <h3 class="text-xl font-semibold mb-4 text-green-700">Your Listings</h3>
+    {% for listing in listings %}
+        <div class="border-b border-gray-200 pb-4 mb-4">
+            <p><strong>Waste Type:</strong> {{ listing.get_waste_type_display }}</p>
+            <p><strong>Quantity:</strong> {{ listing.quantity }}</p>
+            <p><strong>Description:</strong> {{ listing.description }}</p>
+            <p><strong>Location:</strong> {{ listing.location }}</p>
+            {% if listing.image %}
+                <img src="{{ listing.image.url }}" alt="Waste Image" class="mt-2 rounded-lg max-w-sm border shadow">
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No listings created yet.</p>
+    {% endfor %}
 </div>
 {% endblock %}
