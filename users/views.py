@@ -4,6 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserRegisterForm, QuickRegisterForm,ProfileEditForm
 from .models import Profile
+from django.views.decorators.csrf import csrf_protect
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def register(request):
@@ -46,34 +50,69 @@ def profile(request):
         'is_quick_access': is_quick_access,
     })
 
+
+@csrf_protect
 def user_login(request):
-    if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
-        password = request.POST.get('password', '').strip()
+    """
+    Enhanced login view with better error handling and debugging
+    """
+    try:
+        if request.method == 'POST':
+            username = request.POST.get('username', '').strip()
+            password = request.POST.get('password', '').strip()
+            next_url = request.POST.get('next', request.GET.get('next', 'profile'))
 
-        if not username or not password:
-            messages.error(request, 'Username and password are required.')
-            return render(request, 'users/login.html')
+            # Debug logging
+            logger.info(f"Login attempt - Username: {username}, Next: {next_url}")
 
-        user = authenticate(request, username=username, password=password)
+            # Validation
+            if not username or not password:
+                messages.error(request, 'Username and password are required.')
+                return render(request, 'users/login.html', {'next': next_url})
 
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                try:
-                    if user.profile.user_type == 'quick_access':
-                        return redirect('quick_dashboard')
-                except Profile.DoesNotExist:
-                    pass
-
-                next_url = request.GET.get('next', 'profile')
-                return redirect(next_url)
+            # Authentication
+            user = authenticate(request, username=username, password=password)
+            
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    logger.info(f"Successful login for user: {username}")
+                    
+                    # Check user type and redirect accordingly
+                    try:
+                        if hasattr(user, 'profile') and user.profile.user_type == 'quick_access':
+                            return redirect('quick_dashboard')
+                    except Exception as e:
+                        logger.warning(f"Profile check failed: {e}")
+                        # Continue with normal flow if profile check fails
+                    
+                    # Safe redirect handling
+                    if next_url and next_url != 'None':
+                        try:
+                            return redirect(next_url)
+                        except Exception as e:
+                            logger.warning(f"Redirect to {next_url} failed: {e}")
+                            return redirect('profile')
+                    else:
+                        return redirect('profile')
+                else:
+                    messages.error(request, 'Your account has been disabled.')
+                    logger.warning(f"Login attempt for disabled account: {username}")
             else:
-                messages.error(request, 'Account is disabled.')
+                messages.error(request, 'Invalid username or password.')
+                logger.warning(f"Failed login attempt for username: {username}")
+                
+            return render(request, 'users/login.html', {'next': next_url})
+        
+        # GET request - show login form
         else:
-            messages.error(request, 'Invalid credentials')
-    return render(request, 'users/login.html')
-
+            next_url = request.GET.get('next', 'profile')
+            return render(request, 'users/login.html', {'next': next_url})
+            
+    except Exception as e:
+        logger.error(f"Login view error: {str(e)}", exc_info=True)
+        messages.error(request, 'An internal error occurred. Please try again.')
+        return render(request, 'users/login.html', {'next': request.GET.get('next', 'profile')})
 def user_logout(request):
     logout(request)
     messages.success(request, 'You have been logged out.')
