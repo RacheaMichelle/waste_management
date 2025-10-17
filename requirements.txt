@@ -27,6 +27,7 @@ pyasn1==0.6.1
 pyasn1_modules==0.4.2
 pycparser==2.23
 pyOpenSSL==25.3.0
+Python==3.11.5
 django-redis==5.4.0
 redis==5.2.0
 requests==2.32.5
