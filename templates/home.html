@@ -1,41 +1,454 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="min-h-screen flex flex-col md:flex-row bg-gray-100">
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex flex-col md:flex-row">
   
-  <!-- Left Section - Bright green background -->
-  <div class="md:w-1/2 flex items-center justify-center p-10 bg-green-500 text-gray-900">
-    <div class="text-center">
-      <h1 class="text-4xl md:text-5xl font-extrabold mb-6 drop-shadow-lg">
-        Welcome to Waste Management Platform
+  <!-- Left Section - Hero Content -->
+  <div class="md:w-1/2 flex items-center justify-center p-8 md:p-12 relative overflow-hidden">
+    <!-- Background decorative elements -->
+    <div class="absolute top-0 left-0 w-32 h-32 bg-green-200 rounded-full -translate-x-16 -translate-y-16 opacity-60"></div>
+    <div class="absolute bottom-0 right-0 w-48 h-48 bg-blue-200 rounded-full translate-x-24 translate-y-24 opacity-60"></div>
+    
+    <div class="text-center relative z-10 max-w-lg">
+      <!-- Animated logo/icon -->
+      <div class="mb-8">
+        <div class="w-20 h-20 bg-gradient-to-r from-green-400 to-blue-400 rounded-2xl mx-auto flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform duration-300">
+          <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+      </div>
+
+      <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-6 leading-tight">
+        Welcome to 
+        <span class="bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent">
+          Clean Uganda
+        </span>
       </h1>
-      <p class="text-lg md:text-xl leading-relaxed drop-shadow-md font-medium">
-        Join us in keeping Uganda clean by reporting illegal dumping and promoting sustainable practices.
+      
+      <p class="text-lg md:text-xl text-gray-600 leading-relaxed mb-8">
+        Join our community in creating a cleaner, greener Uganda. Report illegal dumping instantly, connect with waste collectors, and learn sustainable practices together.
       </p>
+
+      <!-- Quick Report Highlight -->
+      <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6">
+        <div class="flex items-center justify-center">
+          <svg class="w-6 h-6 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span class="text-yellow-700 font-semibold">Report dumping instantly - No signup required!</span>
+        </div>
+      </div>
+
+      <!-- Stats or features -->
+      <div class="grid grid-cols-3 gap-4 mt-8">
+        <div class="text-center">
+          <div class="text-2xl font-bold text-green-500">500+</div>
+          <div class="text-sm text-gray-500">Reports</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-blue-500">200+</div>
+          <div class="text-sm text-gray-500">Collectors</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-purple-500">50+</div>
+          <div class="text-sm text-gray-500">Communities</div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Right Section - Bright colored buttons -->
-  <div class="md:w-1/2 flex items-center justify-center p-10">
+  <!-- Right Section - Action Buttons -->
+  <div class="md:w-1/2 flex items-center justify-center p-8 md:p-12 bg-white rounded-l-3xl shadow-xl">
     <div class="w-full max-w-md space-y-6">
+      
+      {% if user.is_authenticated %}
+        <!-- Logged-in User View -->
+        <div class="text-center mb-8">
+          <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-green-400 to-blue-400 rounded-2xl flex items-center justify-center">
+            <i class="fas fa-user text-white text-2xl"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome Back, {{ user.username }}! 👋</h2>
+          <p class="text-gray-600">Ready to continue your clean Uganda journey?</p>
+        </div>
 
-      <a href="{% url 'register' %}" 
-         class="block w-full bg-blue-600 hover:bg-blue-700 text-gray-100 text-lg font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 text-center">
-       SIGNUP for (Householders, Collectors, Businesses, recyclers) to find matches
-      </a>
+        <div class="space-y-4">
+          <a href="{% url 'profile' %}" class="group block bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
+            <div class="flex items-center">
+              <i class="fas fa-user-circle text-xl mr-4"></i>
+              <div class="flex-1 text-left">
+                <h3 class="font-bold">View Profile</h3>
+                <p class="text-green-100 text-sm">Manage your account</p>
+              </div>
+              <i class="fas fa-chevron-right"></i>
+            </div>
+          </a>
 
-      <a href="{% url 'quick_register' %}" 
-         class="block w-full bg-green-500 hover:bg-green-600 text-gray-900 text-lg font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 text-center">
-         SIGNUP for Quick Access to (Quizzes, Learning resources, Report Dumping)
-      </a>
+          <a href="{% url 'waste_listing_create' %}" class="group block bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
+            <div class="flex items-center">
+              <i class="fas fa-plus-circle text-xl mr-4"></i>
+              <div class="flex-1 text-left">
+                <h3 class="font-bold">Create Listing</h3>
+                <p class="text-blue-100 text-sm">List your waste materials</p>
+              </div>
+              <i class="fas fa-chevron-right"></i>
+            </div>
+          </a>
 
-      <a href="{% url 'report_dumping' %}" 
-         class="block w-full bg-red-500 hover:bg-red-600 text-gray-100 text-lg font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 text-center">
-        Report Illegal Dumping Now
-      </a>
+          <a href="{% url 'waste_list' %}" class="group block bg-gradient-to-r from-purple-500 to-purple-600 text-white p-4 rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
+            <div class="flex items-center">
+              <i class="fas fa-list text-xl mr-4"></i>
+              <div class="flex-1 text-left">
+                <h3 class="font-bold">My Listings</h3>
+                <p class="text-purple-100 text-sm">View your waste listings</p>
+              </div>
+              <i class="fas fa-chevron-right"></i>
+            </div>
+          </a>
 
+          <a href="{% url 'waste_quiz' %}" class="group block bg-gradient-to-r from-yellow-500 to-yellow-600 text-white p-4 rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
+            <div class="flex items-center">
+              <i class="fas fa-brain text-xl mr-4"></i>
+              <div class="flex-1 text-left">
+                <h3 class="font-bold">Take Quizzes</h3>
+                <p class="text-yellow-100 text-sm">Test your knowledge</p>
+              </div>
+              <i class="fas fa-chevron-right"></i>
+            </div>
+          </a>
+
+          <!-- Chatbot Button -->
+          <button onclick="openChatbot()" class="group block bg-gradient-to-r from-pink-500 to-pink-600 text-white p-4 rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl w-full">
+            <div class="flex items-center">
+              <i class="fas fa-robot text-xl mr-4"></i>
+              <div class="flex-1 text-left">
+                <h3 class="font-bold">Ask CleanBot</h3>
+                <p class="text-pink-100 text-sm">Get instant help</p>
+              </div>
+              <i class="fas fa-chevron-right"></i>
+            </div>
+          </button>
+        </div>
+
+      {% else %}
+        <!-- Guest User View -->
+        <div class="text-center mb-8">
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">Get Started</h2>
+          <p class="text-gray-600">Choose how you'd like to participate</p>
+        </div>
+
+        <!-- Main Action Cards -->
+        <div class="space-y-6">
+          <!-- Instant Report - No Login Required -->
+          <a href="{% url 'report_dumping' %}" 
+             class="group block bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white p-6 rounded-2xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl border-l-4 border-red-400 relative">
+            <!-- "No Login Required" badge -->
+            <div class="absolute -top-2 -right-2 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+              NO SIGNUP NEEDED
+            </div>
+            <div class="flex items-center">
+              <div class="bg-white bg-opacity-20 p-3 rounded-xl mr-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h3 class="font-bold text-lg mb-1">Report Illegal Dumping</h3>
+                <p class="text-red-100 text-sm opacity-90">Quick report - No account needed</p>
+              </div>
+              <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </div>
+          </a>
+
+          <!-- Full Platform Access -->
+          <a href="{% url 'register' %}" 
+             class="group block bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white p-6 rounded-2xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl border-l-4 border-blue-400">
+            <div class="flex items-center">
+              <div class="bg-white bg-opacity-20 p-3 rounded-xl mr-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h3 class="font-bold text-lg mb-1">Join Our Community</h3>
+                <p class="text-blue-100 text-sm opacity-90">Householders, Collectors, Businesses, Recyclers</p>
+              </div>
+              <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </div>
+          </a>
+
+          <!-- Quick Access -->
+          <a href="{% url 'resources' %}" 
+             class="group block bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white p-6 rounded-2xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl border-l-4 border-green-400">
+            <div class="flex items-center">
+              <div class="bg-white bg-opacity-20 p-3 rounded-xl mr-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h3 class="font-bold text-lg mb-1">Learning Resources</h3>
+                <p class="text-green-100 text-sm opacity-90">Quizzes, Guides, Tutorials</p>
+              </div>
+              <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </div>
+          </a>
+        </div>
+
+        <!-- Login link for existing users -->
+        <div class="text-center mt-8 pt-6 border-t border-gray-200">
+          <p class="text-gray-600">
+            Already have an account? 
+            <a href="{% url 'login' %}" class="text-blue-500 hover:text-blue-600 font-semibold transition-colors">
+              Sign In
+            </a>
+          </p>
+        </div>
+      {% endif %}
     </div>
   </div>
-
 </div>
+
+<!-- Chatbot Modal -->
+<div id="chatbotModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-2xl w-full max-w-md mx-4 max-h-[80vh] flex flex-col">
+    <!-- Chatbot Header -->
+    <div class="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-t-2xl text-white">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <i class="fas fa-robot text-xl mr-3"></i>
+          <div>
+            <h3 class="font-bold text-lg">CleanBot Assistant</h3>
+            <p class="text-green-100 text-sm">How can I help you today?</p>
+          </div>
+        </div>
+        <button onclick="closeChatbot()" class="text-white hover:text-gray-200">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Chat Messages -->
+    <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-4 max-h-96">
+      <div class="flex items-start space-x-3">
+        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+          <i class="fas fa-robot text-white text-sm"></i>
+        </div>
+        <div class="bg-gray-100 rounded-2xl rounded-tl-none p-4 max-w-[80%]">
+          <p class="text-gray-800">👋 Hello! I'm CleanBot, your waste management assistant for Clean Uganda! 🌍</p>
+          <p class="text-gray-800 mt-2">I can help you with:</p>
+          <ul class="text-sm text-gray-600 mt-2 space-y-1">
+            <li>• Account setup and login</li>
+            <li>• Waste listing creation</li>
+            <li>• Recycling information</li>
+            <li>• Matching with collectors</li>
+            <li>• Educational quizzes</li>
+            <li>• Platform navigation</li>
+          </ul>
+          <p class="text-gray-800 mt-2">What would you like to know?</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Quick Questions -->
+    <div class="p-4 border-t border-gray-200">
+      <div class="grid grid-cols-2 gap-2 mb-4">
+        <button onclick="askQuickQuestion('How do I sign up?')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm p-2 rounded-lg transition-colors">
+          Sign Up Help
+        </button>
+        <button onclick="askQuickQuestion('How to login?')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm p-2 rounded-lg transition-colors">
+          Login Help
+        </button>
+        <button onclick="askQuickQuestion('Tell me about quizzes')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm p-2 rounded-lg transition-colors">
+          Quizzes
+        </button>
+        <button onclick="askQuickQuestion('How do I report dumping?')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm p-2 rounded-lg transition-colors">
+          Report Dumping
+        </button>
+      </div>
+      
+      <!-- Chat Input -->
+      <div class="flex space-x-2">
+        <input type="text" id="chatInput" placeholder="Type your question..." 
+               class="flex-1 border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+        <button onclick="sendMessage()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl transition-colors">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Floating decorative elements -->
+<div class="fixed bottom-4 right-4 w-8 h-8 bg-yellow-400 rounded-full opacity-20 animate-bounce"></div>
+<div class="fixed top-4 left-4 w-6 h-6 bg-purple-400 rounded-full opacity-20 animate-pulse"></div>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+</style>
+
+<script>
+  // Chatbot functionality
+  function openChatbot() {
+    document.getElementById('chatbotModal').classList.remove('hidden');
+  }
+  
+  function closeChatbot() {
+    document.getElementById('chatbotModal').classList.add('hidden');
+  }
+  
+  function askQuickQuestion(question) {
+    document.getElementById('chatInput').value = question;
+    sendMessage();
+  }
+  
+  async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    // Add user message
+    addMessage(message, 'user');
+    input.value = '';
+    
+    try {
+      // Send message to Django backend
+      const response = await fetch('/chatbot/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ message: message })
+      });
+      
+      const data = await response.json();
+      addMessage(data.response, 'bot');
+    } catch (error) {
+      // Fallback to local responses if API fails
+      const response = getBotResponse(message);
+      addMessage(response, 'bot');
+    }
+  }
+  
+  function addMessage(text, sender) {
+    const messagesContainer = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    
+    if (sender === 'user') {
+      messageDiv.className = 'flex items-start space-x-3 justify-end';
+      messageDiv.innerHTML = `
+        <div class="bg-blue-500 rounded-2xl rounded-tr-none p-4 max-w-[80%]">
+          <p class="text-white">${text}</p>
+        </div>
+        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+          <i class="fas fa-user text-white text-sm"></i>
+        </div>
+      `;
+    } else {
+      messageDiv.className = 'flex items-start space-x-3';
+      messageDiv.innerHTML = `
+        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+          <i class="fas fa-robot text-white text-sm"></i>
+        </div>
+        <div class="bg-gray-100 rounded-2xl rounded-tl-none p-4 max-w-[80%]">
+          <p class="text-gray-800">${text}</p>
+        </div>
+      `;
+    }
+    
+    messagesContainer.appendChild(messageDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+  
+  function getBotResponse(message) {
+    const lowerMessage = message.toLowerCase();
+    
+    // Enhanced responses with signup/login guidance and "you're welcome"
+    if (anyWordInMessage(lowerMessage, ['thank', 'thanks', 'appreciate'])) {
+      return "🌟 You're welcome! I'm happy to help with your waste management needs. Is there anything else you'd like to know about Clean Uganda?";
+    }
+    else if (anyWordInMessage(lowerMessage, ['sign up', 'signup', 'register', 'create account', 'new account'])) {
+      return "📝 To sign up for Clean Uganda:\n\n1. Click 'Login' in the top navigation\n2. Select 'Register' or 'Sign Up'\n3. Fill in your details:\n   - Full name\n   - Email address\n   - Choose user type (Household, Business, or Collector/Recycler)\n   - Create a secure password\n4. Verify your email (if required)\n5. Complete your profile with location details\n\n💡 Pro tip: Choose the correct user type as it determines what features you can access!";
+    }
+    else if (anyWordInMessage(lowerMessage, ['log in', 'login', 'sign in', 'access account'])) {
+      return "🔐 To log in to Clean Uganda:\n\n1. Click 'Login' in the top navigation\n2. Enter your email and password\n3. Click 'Login' to access your dashboard\n\n🔒 Forgot password? Click 'Forgot Password' to reset it via email.\n\nOnce logged in, you can:\n- Create waste listings\n- View matches\n- Access educational resources\n- Take quizzes\n- Report illegal dumping";
+    }
+    else if (anyWordInMessage(lowerMessage, ['quiz', 'quizzes', 'test', 'learn', 'education'])) {
+      return "🎯 Waste Management Quizzes:\n\nAVAILABLE QUIZZES:\n• Plastic Recycling Knowledge\n• Paper & Cardboard Recycling\n• Glass Waste Management\n• Organic Waste Composting\n• E-Waste Handling\n• Metal Recycling\n• General Waste Segregation\n\n📊 FEATURES:\n- Multiple difficulty levels (Easy, Medium, Hard)\n- Points system for correct answers\n- Detailed explanations for learning\n- Progress tracking\n- Uganda-specific content\n\n🚀 Access: Go to 'Waste Quiz' in the main menu to test your knowledge!";
+    }
+    else if (lowerMessage.includes('report') || lowerMessage.includes('dumping')) {
+      return "🚨 To report illegal dumping:\n\n1. Go to 'Report Dumping' page\n2. Click on the map to select location\n3. Add description of the dumping\n4. Upload photos as evidence\n5. Submit the report\n\n📱 No account needed! Authorities will be notified immediately and take action.";
+    }
+    else if (lowerMessage.includes('match') || lowerMessage.includes('connect')) {
+      return "🤝 How matching works:\n\nFOR WASTE GENERATORS (Households/Businesses):\n1. Create waste listings with type, quantity, location\n2. Our system automatically matches you with nearby collectors\n3. Check 'Matches' page to see interested collectors\n4. Communicate and arrange pickup\n\nFOR COLLECTORS/RECYCLERS:\n1. Set up your profile with accepted waste types\n2. Browse available listings in your area\n3. Send match requests to generators\n4. Coordinate pickup and recycling";
+    }
+    else if (lowerMessage.includes('waste type') || lowerMessage.includes('list') || lowerMessage.includes('create listing')) {
+      return "🗑️ Creating Waste Listings:\n\n1. Go to 'List Waste' in the menu\n2. Select waste type: Plastic, Paper, Glass, Organic, Metal, E-waste, Clothing, Hazardous, Construction, or Medical\n3. Specify quantity and unit (kg, liters, pieces)\n4. Add your location\n5. Include description and photos\n6. Set status (Available, Pending, Collected)\n\n💡 Be specific about quantity and condition for better matches!";
+    }
+    else if (lowerMessage.includes('recycle') && lowerMessage.includes('plastic')) {
+      return "♻️ Plastic Recycling Guide:\n\n1. COLLECTION: Gather plastic waste\n2. SORTING: Separate by type (PET#1, HDPE#2, etc.)\n3. CLEANING: Wash thoroughly, remove labels\n4. PREPARATION: Remove caps and non-plastic parts\n\n🔄 Recycled plastic becomes:\n- New bottles and containers\n- Furniture and construction materials\n- Clothing and textiles\n- Ugandan crafts and products\n\n📚 Check 'Educational Resources' for detailed guides!";
+    }
+    else if (lowerMessage.includes('collector') || lowerMessage.includes('recycler')) {
+      return "👷 For Collectors/Recyclers:\n\nSETUP:\n1. Register as 'Collector/Recycler' user type\n2. Complete your profile with:\n   - Business name and contact\n   - Waste types you accept\n   - Service areas/locations\n   - Processing capabilities\n\nOPERATION:\n1. Browse available waste listings\n2. Send match requests to generators\n3. Coordinate pickup logistics\n4. Update listing status after collection\n5. Provide recycling documentation\n\n💼 Regular profile updates increase your visibility!";
+    }
+    else if (lowerMessage.includes('household') || lowerMessage.includes('business')) {
+      return "🏠 For Households & Businesses:\n\nGETTING STARTED:\n1. Register as 'Household' or 'Business'\n2. Set your location for local matches\n3. Start listing your waste materials\n\nBENEFITS:\n- Connect with verified collectors\n- Learn proper waste management\n- Report environmental issues\n- Access educational resources\n- Earn recognition for eco-friendly practices";
+    }
+    else if (lowerMessage.includes('help') || lowerMessage.includes('support')) {
+      return "💡 How can I help you?\n\nI can assist with:\n\n🔸 ACCOUNT: Sign up, Login, Profile setup\n🔸 WASTE LISTINGS: Creating, editing, managing\n🔸 MATCHING: How it works, finding partners\n🔸 RECYCLING: Processes for different materials\n🔸 REPORTING: Illegal dumping procedures\n🔸 EDUCATION: Quizzes and learning resources\n🔸 NAVIGATION: Using the platform features\n\nWhat specific help do you need today?";
+    }
+    else if (anyWordInMessage(lowerMessage, ['hello', 'hi', 'hey', 'greetings'])) {
+      return "👋 Hello! I'm CleanBot, your waste management assistant for Clean Uganda! 🌍\n\nI can help you with:\n• Account setup and login\n• Waste listing creation\n• Recycling information\n• Matching with collectors\n• Reporting illegal dumping\n• Educational quizzes\n• Platform navigation\n\nWhat would you like to know about our waste management platform?";
+    }
+    else {
+      return "🤖 I'm here to help you with Clean Uganda's waste management platform!\n\nYou can ask me about:\n\n🔐 ACCOUNT: 'How do I sign up?' or 'Login help'\n🗑️ WASTE: 'How to create a listing?'\n🤝 MATCHING: 'How does matching work?'\n📚 LEARNING: 'Tell me about quizzes'\n🚨 REPORTING: 'How to report dumping?'\n📍 LOCATION: 'Setting my area'\n\nOr type 'features' to see all platform capabilities!\n\nWhat would you like to know?";
+    }
+  }
+  
+  // Helper function to check multiple words in message
+  function anyWordInMessage(message, words) {
+    return words.some(word => message.includes(word));
+  }
+  
+  // Get CSRF token for Django
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  
+  // Enter key support for chat
+  document.getElementById('chatInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  });
+</script>
 {% endblock %}

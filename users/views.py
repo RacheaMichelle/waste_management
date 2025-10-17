@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import UserRegisterForm, QuickRegisterForm
+from .forms import UserRegisterForm, QuickRegisterForm,ProfileEditForm
 from .models import Profile
+
 
 def register(request):
     if request.method == 'POST':
@@ -103,3 +104,24 @@ def quick_dashboard(request):
     return render(request, 'users/quick_dashboard.html', {
         'is_quick_access': is_quick_access,
     })
+    
+    
+    
+
+@login_required
+def profile_edit(request):
+    try:
+        profile = request.user.profile
+    except Profile.DoesNotExist:
+        profile = Profile.objects.create(user=request.user)
+    
+    if request.method == 'POST':
+        form = ProfileEditForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('profile')
+    else:
+        form = ProfileEditForm(instance=profile)
+    
+    return render(request, 'users/profile_edit.html', {'form': form})

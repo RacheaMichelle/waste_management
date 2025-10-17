@@ -1,48 +1,127 @@
 {% extends "base.html" %}
 
+{% block title %}Quiz Results | Clean Uganda{% endblock %}
+
 {% block content %}
-  <h2 class="text-3xl font-extrabold text-center text-indigo-700 mb-8">
-    Your Score: <span class="text-green-600">{{ score }}</span>/<span class="text-gray-600">{{ total }}</span>
-  </h2>
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Results Header -->
+        <div class="text-center mb-12 bg-white rounded-2xl shadow-lg p-8">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mb-6">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Assessment Complete</h1>
+            
+            <!-- Score Display -->
+            <div class="inline-flex items-center bg-gradient-to-r from-blue-600 to-green-600 rounded-2xl px-8 py-4 shadow-lg">
+                <span class="text-3xl font-bold text-white mr-4">{{ score }}/{{ total }}</span>
+                <div class="text-white">
+                    <div class="text-sm opacity-90">Your Score</div>
+                    <div class="text-xl font-semibold">{{ percentage|floatformat:1 }}%</div>
+                </div>
+            </div>
 
-  <div class="max-w-3xl mx-auto space-y-6">
-    {% for item in feedback %}
-    <div class="p-6 rounded-xl shadow-md transition-shadow duration-300 hover:shadow-lg
-                {% if item.is_correct %}
-                  bg-green-50 border border-green-300
+            <!-- Performance Message -->
+            <div class="mt-6 max-w-md mx-auto">
+                {% if percentage >= 80 %}
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
+                    <strong>Excellent!</strong> You demonstrate strong waste management knowledge.
+                </div>
+                {% elif percentage >= 60 %}
+                <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded-lg">
+                    <strong>Good Job!</strong> You have a solid understanding of waste management principles.
+                </div>
                 {% else %}
-                  bg-red-50 border border-red-300
-                {% endif %}">
+                <div class="bg-orange-100 border border-orange-400 text-orange-700 px-4 py-3 rounded-lg">
+                    <strong>Keep Learning!</strong> Review the resources to improve your knowledge.
+                </div>
+                {% endif %}
+            </div>
+        </div>
 
-      <p class="mb-3 text-lg font-semibold text-gray-900">
-        <span class="text-indigo-600 font-bold">Q:</span> {{ item.question }}
-      </p>
+        <!-- Detailed Feedback -->
+        <div class="space-y-6">
+            <h2 class="text-2xl font-bold text-gray-900 text-center mb-8">Detailed Feedback</h2>
+            
+            {% for item in feedback %}
+            <div class="bg-white rounded-xl shadow-md border-l-4 {% if item.is_correct %}border-green-500{% else %}border-red-500{% endif %} overflow-hidden">
+                <div class="p-6">
+                    <!-- Question Header -->
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-start">
+                            <span class="flex-shrink-0 {% if item.is_correct %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %} font-semibold px-3 py-1 rounded-lg text-sm mr-4">
+                                Q{{ forloop.counter }}
+                            </span>
+                            <h3 class="text-lg font-semibold text-gray-900 leading-relaxed">
+                                {{ item.question }}
+                            </h3>
+                        </div>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {% if item.is_correct %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                            {% if item.is_correct %}
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Correct
+                            {% else %}
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                                Incorrect
+                            {% endif %}
+                        </span>
+                    </div>
 
-      <p class="mb-1 text-gray-800">
-        <strong>Your Answer:</strong> 
-        <span class="{% if item.is_correct %}text-green-700 font-semibold{% else %}text-red-700 font-semibold{% endif %}">
-          {{ item.user_answer }}
-        </span>
-      </p>
+                    <!-- Answers Comparison -->
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-700 mb-2">Your Answer</h4>
+                            <p class="{% if item.is_correct %}text-green-700 font-medium{% else %}text-red-700 font-medium{% endif %}">
+                                {{ item.user_answer }}
+                            </p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-700 mb-2">Correct Answer</h4>
+                            <p class="text-green-700 font-medium">{{ item.correct_answer }}</p>
+                        </div>
+                    </div>
 
-      <p class="mb-2 text-gray-700">
-        <strong>Correct Answer:</strong> {{ item.correct_answer }}
-      </p>
+                    <!-- Explanation -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-blue-900 mb-2 flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Explanation
+                        </h4>
+                        <p class="text-blue-800 leading-relaxed">{{ item.explanation }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
 
-      <p class="mb-4 text-gray-600 italic">
-        <strong>Explanation:</strong> {{ item.explanation }}
-      </p>
-
-      {% if item.is_correct %}
-        <p class="inline-block bg-green-200 text-green-800 font-bold px-4 py-1 rounded-full select-none text-sm">
-          ✅ Correct
-        </p>
-      {% else %}
-        <p class="inline-block bg-red-200 text-red-800 font-bold px-4 py-1 rounded-full select-none text-sm">
-          ❌ Incorrect
-        </p>
-      {% endif %}
+        <!-- Action Buttons -->
+        <div class="text-center mt-12 space-y-4">
+            <a href="{% url 'waste_quiz' %}" 
+               class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 shadow-lg">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                Retake Quiz
+            </a>
+            <div class="block">
+                <a href="{% url 'resources' %}" 
+                   class="inline-flex items-center px-6 py-2 border border-gray-300 text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                    Study Resources
+                </a>
+            </div>
+        </div>
     </div>
-    {% endfor %}
-  </div>
+</div>
 {% endblock %}

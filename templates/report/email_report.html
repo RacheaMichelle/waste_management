@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            line-height: 1.6; 
+            color: #333; 
+            margin: 0;
+            padding: 0;
+            background: #f8fafc;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header { 
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: white; 
+            padding: 30px 20px; 
+            text-align: center; 
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .header p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+        .content { 
+            padding: 30px; 
+        }
+        .section { 
+            margin-bottom: 25px; 
+            padding: 20px; 
+            background: #f8fafc; 
+            border-left: 4px solid #dc2626; 
+            border-radius: 4px;
+        }
+        .section h2 {
+            color: #dc2626;
+            margin-top: 0;
+            font-size: 18px;
+        }
+        .urgent { 
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .footer { 
+            background: #1f2937; 
+            color: #9ca3af; 
+            padding: 20px; 
+            text-align: center; 
+            font-size: 12px; 
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .info-item {
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+        }
+        .label {
+            font-weight: bold;
+            color: #374151;
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .value {
+            color: #111827;
+            display: block;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚨 Illegal Dumping Report</h1>
+            <p>{{ report.get_district_display }} District</p>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2>📋 Reporter Information</h2>
+                <p>{{ reporter_info }}</p>
+            </div>
+            
+            <div class="section">
+                <h2>📍 Location Details</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="label">District</span>
+                        <span class="value">{{ report.get_district_display }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Waste Type</span>
+                        <span class="value">{{ report.get_waste_type_display }}</span>
+                    </div>
+                    <div class="info-item" style="grid-column: span 2;">
+                        <span class="label">Coordinates</span>
+                        <span class="value">{{ report.latitude }}, {{ report.longitude }}</span>
+                    </div>
+                    {% if report.description %}
+                    <div class="info-item" style="grid-column: span 2;">
+                        <span class="label">Description</span>
+                        <span class="value">{{ report.description }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>📄 Report Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="label">Report Time</span>
+                        <span class="value">{{ formatted_date }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Reference ID</span>
+                        <span class="value">#{{ report.id }}</span>
+                    </div>
+                    <div class="info-item" style="grid-column: span 2;">
+                        <span class="label">District Contact</span>
+                        <span class="value">{{ district_contact }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="urgent">
+                <strong>⚠️ IMMEDIATE ATTENTION REQUIRED</strong>
+                <p style="margin: 8px 0 0 0; font-size: 14px;">
+                    This illegal dumping site requires immediate investigation and appropriate cleanup action.
+                </p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>This report was submitted through the Clean Uganda Environmental Platform</p>
+            <p>📍 Making Uganda Cleaner, Together</p>
+            <p style="margin-top: 10px; font-size: 11px; opacity: 0.7;">
+                Automated Notification • Please do not reply to this email
+            </p>
+        </div>
+    </div>
+</body>
+</html>

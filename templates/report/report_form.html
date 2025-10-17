@@ -2,309 +2,612 @@
 {% load static %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-gray-100">
-    <div class="text-center mb-8">
-        <div class="flex justify-center mb-4">
-            <div class="bg-green-100 p-3 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-8">
+    <div class="max-w-4xl mx-auto px-4">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-4">Report Illegal Dumping</h1>
+            <p class="text-gray-600 mb-2">Help keep Uganda clean by reporting illegal dumping sites</p>
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
+                <p class="font-semibold">🗑️ No account needed! Report anonymously if you prefer.</p>
             </div>
         </div>
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">Report Illegal Dumping</h1>
-        <p class="text-gray-600 max-w-lg mx-auto">Help keep Uganda clean by reporting illegal waste disposal. Your report helps authorities take action.</p>
-    </div>
 
-    {% if messages %}
-    <div class="mb-6">
-        {% for message in messages %}
-        <div class="p-4 flex items-start space-x-3 rounded-xl {% if message.tags == 'success' %}bg-green-50 border border-green-200 text-green-800{% elif message.tags == 'error' %}bg-red-50 border border-red-200 text-red-800{% else %}bg-blue-50 border border-blue-200 text-blue-800{% endif %}">
-            {% if message.tags == 'success' %}
-                <svg class="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            {% elif message.tags == 'error' %}
-                <svg class="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            {% endif %}
-            <span class="flex-1">{{ message }}</span>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    <form method="post" enctype="multipart/form-data" novalidate class="space-y-6" id="reportForm">
-        {% csrf_token %}
-
-        <!-- Photo Upload Section -->
-        <div class="space-y-3">
-            <div>
-                <label class="block text-lg font-medium text-gray-800">Photo Evidence <span class="text-red-500">*</span></label>
-                <p class="text-sm text-gray-500 mt-1">Upload clear photos of the illegal dumping site</p>
-            </div>
-            
-            <label id="upload-container" class="flex flex-col w-full h-40 border-2 border-dashed border-green-200 hover:border-green-400 hover:bg-green-50 rounded-xl transition-all cursor-pointer overflow-hidden">
-                <div id="upload-content" class="flex flex-col items-center justify-center h-full pt-7 px-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <p class="pt-2 text-sm text-gray-600 font-medium">Click to upload or drag and drop</p>
-                    <p class="text-xs text-gray-500 mt-1">JPG, PNG (max 5MB)</p>
+        <!-- Report Form -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Anonymous Reporter Information -->
+                <div class="border-b border-gray-200 pb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Your Information (Optional)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Your Name</label>
+                            {{ form.reporter_name }}
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Your Email</label>
+                            {{ form.reporter_email }}
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Your Phone</label>
+                            {{ form.reporter_phone }}
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">This information is optional and will only be used if authorities need to contact you.</p>
                 </div>
-                <input id="id_photo" type="file" name="photo" accept="image/*" class="hidden" required>
-            </label>
-            
-            <div id="image-preview" class="hidden mt-4">
-                <div class="relative group">
-                    <img id="preview-image" src="#" alt="Preview" class="max-h-80 w-auto rounded-lg border border-gray-200 shadow-sm">
-                    <button type="button" id="remove-image" class="absolute top-3 right-3 bg-white/90 text-red-500 rounded-full p-1.5 shadow-md hover:bg-red-500 hover:text-white transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
+
+                <!-- Dumping Details -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Dumping Details</h3>
+                    
+                    <!-- Photo Upload -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Photo Evidence *</label>
+                        <div class="mt-1 flex items-center">
+                            {{ form.photo }}
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">Please upload a clear photo of the dumping site (max 5MB)</p>
+                        {% if form.photo.errors %}
+                            <div class="text-red-600 text-sm mt-1">
+                                {% for error in form.photo.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Waste Type and District -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Waste Type *</label>
+                            {{ form.waste_type }}
+                            {% if form.waste_type.errors %}
+                                <div class="text-red-600 text-sm mt-1">
+                                    {% for error in form.waste_type.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">District *</label>
+                            {{ form.district }}
+                            {% if form.district.errors %}
+                                <div class="text-red-600 text-sm mt-1">
+                                    {% for error in form.district.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Map for Location Selection -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Select Location on Map *</label>
+                        
+                        <!-- Location Help Card -->
+                        <div id="location-help" class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                            <div class="flex items-start">
+                                <span class="text-yellow-600 text-lg mr-2">💡</span>
+                                <div>
+                                    <p class="text-yellow-800 font-medium">How to select location:</p>
+                                    <ul class="text-yellow-700 text-sm mt-1 space-y-1">
+                                        <li>• <strong>Option 1:</strong> Click directly on the map where the dumping occurred</li>
+                                        <li>• <strong>Option 2:</strong> Use "My Current Location" if you're at the site (requires location permission)</li>
+                                        <li>• <strong>Option 3:</strong> Search for a place in the search box above the map</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <button type="button" id="use-current-location" class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-md mb-2">
+                                📍 Use My Current Location
+                            </button>
+                            <button type="button" id="reset-location" class="bg-gray-500 hover:bg-gray-600 text-white text-sm px-4 py-2 rounded-md mb-2 ml-2">
+                                🗺️ Reset to Kampala
+                            </button>
+                            <button type="button" id="location-help-btn" class="bg-purple-500 hover:bg-purple-600 text-white text-sm px-4 py-2 rounded-md mb-2 ml-2">
+                                ❓ Location Help
+                            </button>
+                        </div>
+
+                        <!-- Search Box -->
+                        
+
+                        <div id="map" class="w-full h-96 rounded-lg border border-gray-300 mb-2"></div>
+                        
+                        <div class="flex items-center space-x-4 text-sm">
+                            <span id="selected-location" class="text-gray-600">Click on the map to select location</span>
+                            <span id="location-accuracy" class="text-gray-500"></span>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">Click anywhere on the map to mark the dumping location</p>
+                        
+                        <!-- Hidden latitude/longitude fields -->
+                        {{ form.latitude }}
+                        {{ form.longitude }}
+                        
+                        {% if form.latitude.errors or form.longitude.errors %}
+                            <div class="text-red-600 text-sm mt-1">
+                                {% for error in form.latitude.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                                {% for error in form.longitude.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="text-red-600 text-sm mt-1">
+                                {% for error in form.description.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-6">
+                    <button type="submit" 
+                            class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-105">
+                        📍 Submit Report to Authorities
                     </button>
-                    <div class="absolute bottom-3 left-3 right-3 bg-white/90 rounded-lg px-3 py-2 shadow-sm">
-                        <p id="file-info" class="text-sm font-medium text-gray-700 truncate"></p>
-                        <p class="text-xs text-gray-500 flex items-center mt-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                            </svg>
-                            Ready for upload
-                        </p>
-                    </div>
+                    <p class="text-center text-sm text-gray-500 mt-2">
+                        Your report will be immediately sent to the relevant district authorities
+                    </p>
                 </div>
-            </div>
+            </form>
         </div>
 
-        <!-- Waste Type -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-2">
-                <label for="id_waste_type" class="block text-lg font-medium text-gray-800">Type of Waste</label>
-                <div class="relative">
-                    <select id="id_waste_type" name="waste_type" class="w-full p-3 pl-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition appearance-none bg-white pr-10">
-                        {% for value, label in form.waste_type.field.choices %}
-                            <option value="{{ value }}" {% if form.waste_type.value == value %}selected{% endif %}>{{ label }}</option>
-                        {% endfor %}
-                    </select>
-                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- District -->
-            <div class="space-y-2">
-                <label for="id_district" class="block text-lg font-medium text-gray-800">District</label>
-                <div class="relative">
-                    <select id="id_district" name="district" class="w-full p-3 pl-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition appearance-none bg-white pr-10">
-                        {% for value, label in form.district.field.choices %}
-                            <option value="{{ value }}" {% if form.district.value == value %}selected{% endif %}>{{ label }}</option>
-                        {% endfor %}
-                    </select>
-                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </div>
-                </div>
-                {% if form.district.errors %}
-                    <p class="text-red-500 text-sm">{{ form.district.errors.0 }}</p>
-                {% endif %}
-            </div>
+        <!-- Quick Tips -->
+        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <h4 class="font-semibold text-blue-800 mb-2">💡 Quick Tips:</h4>
+            <ul class="text-sm text-blue-700 space-y-1">
+                <li>• Take a clear photo showing the dumping site</li>
+                <li>• Click on the map to mark the exact location</li>
+                <li>• Use "My Current Location" for accurate GPS coordinates</li>
+                <li>• Provide as much detail as possible in the description</li>
+                <li>• Authorities will be notified immediately upon submission</li>
+            </ul>
         </div>
-        
-        <!-- Description -->
-        <div class="space-y-2">
-            <label for="id_description" class="block text-lg font-medium text-gray-800">Additional Details</label>
-            <p class="text-sm text-gray-500 mb-2">Describe what you observed (optional)</p>
-            <textarea id="id_description" name="description" rows="4" class="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition" placeholder="e.g. Approximate size of dumping, time you observed it, any identifying features...">{% if form.description.value %}{{ form.description.value }}{% endif %}</textarea>
-        </div>
-        
-        <!-- Map Section -->
-        <div class="space-y-3">
-            <div>
-                <label class="block text-lg font-medium text-gray-800">Location on Map <span class="text-red-500">*</span></label>
-                <p class="text-sm text-gray-500">Click on the map to mark the exact location of the dumping site</p>
-            </div>
-            
-            <div id="map" class="h-80 w-full rounded-xl border-2 border-green-200 bg-gray-50 shadow-inner overflow-hidden"></div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label for="id_latitude" class="block text-sm font-medium text-gray-700">Latitude</label>
-                    <input type="text" id="id_latitude" name="latitude" readonly class="w-full p-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-700">
-                </div>
-                <div>
-                    <label for="id_longitude" class="block text-sm font-medium text-gray-700">Longitude</label>
-                    <input type="text" id="id_longitude" name="longitude" readonly class="w-full p-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-700">
-                </div>
-            </div>
-            
-            <div id="location-feedback" class="p-3 bg-blue-50 border border-blue-100 rounded-lg text-blue-800 text-sm flex items-start">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <span>Click on the map to select the location of the illegal dumping site</span>
-            </div>
-        </div>
-
-        <!-- Submit Button -->
-        <div class="pt-4">
-            <button type="submit" class="w-full py-4 px-6 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold text-lg rounded-xl shadow-md transition-all duration-200 transform hover:scale-[1.01] active:scale-100 flex items-center justify-center space-x-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-                <span>Submit Report</span>
-            </button>
-        </div>
-    </form>
+    </div>
 </div>
 
+<!-- Location Help Modal -->
+<div id="location-help-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-6 max-w-md mx-4">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-gray-800">📍 Location Help</h3>
+            <button id="close-help-modal" class="text-gray-500 hover:text-gray-700">&times;</button>
+        </div>
+        
+        <div class="space-y-3">
+            <div class="flex items-start">
+                <span class="text-blue-500 text-lg mr-2">🗺️</span>
+                <div>
+                    <p class="font-medium">Click on Map</p>
+                    <p class="text-sm text-gray-600">Simply click on the map where the dumping site is located</p>
+                </div>
+            </div>
+            
+            <div class="flex items-start">
+                <span class="text-green-500 text-lg mr-2">📍</span>
+                <div>
+                    <p class="font-medium">Current Location</p>
+                    <p class="text-sm text-gray-600">If location access is blocked:</p>
+                    <ul class="text-sm text-gray-600 ml-4 mt-1">
+                        <li>• Click the location icon (📍) in your browser's address bar</li>
+                        <li>• Select "Allow" when prompted</li>
+                        <li>• Refresh the page and try again</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="flex items-start">
+                <span class="text-purple-500 text-lg mr-2">🔍</span>
+                <div>
+                    <p class="font-medium">Search</p>
+                    <p class="text-sm text-gray-600">Use the search box to find specific places or addresses</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4 pt-4 border-t border-gray-200">
+            <p class="text-sm text-gray-600"><strong>Note:</strong> Manual map selection works perfectly if location access is not available!</p>
+        </div>
+        
+        <button id="got-it-btn" class="w-full bg-blue-500 text-white py-2 rounded-md mt-4 hover:bg-blue-600">
+            Got it!
+        </button>
+    </div>
+</div>
+
+<!-- Include Leaflet CSS and JS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Include Leaflet Geosearch -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.8.0/dist/geosearch.css" />
+<script src="https://unpkg.com/leaflet-geosearch@3.8.0/dist/geosearch.umd.js"></script>
+
+<style>
+#map { 
+    height: 400px; 
+    z-index: 1;
+}
+.leaflet-container {
+    font-family: inherit;
+    border-radius: 0.5rem;
+}
+.location-marker {
+    background-color: #ef4444;
+    border: 3px solid white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+.accuracy-circle {
+    stroke: #3b82f6;
+    stroke-width: 2;
+    fill: #3b82f6;
+    fill-opacity: 0.1;
+}
+.leaflet-popup-content {
+    font-family: inherit;
+}
+.search-engine-popup {
+    max-width: 300px !important;
+}
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Photo upload handling
-    const photoInput = document.getElementById('id_photo');
-    const previewContainer = document.getElementById('image-preview');
-    const previewImage = document.getElementById('preview-image');
-    const uploadContent = document.getElementById('upload-content');
-    const uploadContainer = document.getElementById('upload-container');
-    const removeButton = document.getElementById('remove-image');
-    const fileInfo = document.getElementById('file-info');
+    // Default to Kampala coordinates
+    const defaultLat = 0.3476;
+    const defaultLng = 32.5825;
+    const defaultZoom = 12;
 
-    // Handle drag and drop
-    uploadContainer.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadContainer.classList.add('border-green-400', 'bg-green-50');
-    });
-
-    uploadContainer.addEventListener('dragleave', () => {
-        uploadContainer.classList.remove('border-green-400', 'bg-green-50');
-    });
-
-    uploadContainer.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadContainer.classList.remove('border-green-400', 'bg-green-50');
-        if (e.dataTransfer.files.length) {
-            photoInput.files = e.dataTransfer.files;
-            handleFileUpload();
-        }
-    });
-
-    photoInput.addEventListener('change', handleFileUpload);
-
-    function handleFileUpload() {
-        if (photoInput.files && photoInput.files[0]) {
-            const file = photoInput.files[0];
-            
-            // Validate file size
-            if (file.size > 5 * 1024 * 1024) {
-                alert('File size exceeds 5MB limit');
-                photoInput.value = '';
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImage.src = e.target.result;
-                previewContainer.classList.remove('hidden');
-                uploadContent.classList.add('hidden');
-                fileInfo.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
-            }
-            reader.readAsDataURL(file);
-        }
-    }
-
-    removeButton.addEventListener('click', function() {
-        photoInput.value = '';
-        previewContainer.classList.add('hidden');
-        uploadContent.classList.remove('hidden');
-        fileInfo.textContent = '';
-    });
-
-    // Map initialization
-    const map = L.map('map').setView([1.3733, 32.2903], 7);
+    // Initialize map
+    const map = L.map('map').setView([defaultLat, defaultLng], defaultZoom);
+    
+    // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    // Add Uganda boundaries
-    fetch('{% static "geojson/uganda.geojson" %}')
-        .then(response => response.json())
-        .then(data => {
-            L.geoJSON(data, {
-                style: {
-                    color: '#4B5563',
-                    weight: 1,
-                    fillOpacity: 0.1
-                }
-            }).addTo(map);
-        })
-        .catch(error => console.error('Error loading GeoJSON:', error));
+    // Initialize search control
+    const searchControl = new GeoSearch.GeoSearchControl({
+        provider: new GeoSearch.OpenStreetMapProvider(),
+        style: 'bar',
+        searchLabel: 'Search for places in Uganda...',
+        showMarker: false,
+        autoClose: true,
+    });
+    map.addControl(searchControl);
 
-    let marker;
-    const initialLat = parseFloat("{{ form.latitude.value|default:0 }}");
-    const initialLng = parseFloat("{{ form.longitude.value|default:0 }}");
+    let marker = null;
+    let circle = null;
+    const latitudeField = document.getElementById('id_latitude');
+    const longitudeField = document.getElementById('id_longitude');
+    const locationDisplay = document.getElementById('selected-location');
+    const accuracyDisplay = document.getElementById('location-accuracy');
+    const useCurrentLocationBtn = document.getElementById('use-current-location');
+    const resetLocationBtn = document.getElementById('reset-location');
+    const locationHelpBtn = document.getElementById('location-help-btn');
+    const locationSearch = document.getElementById('location-search');
+    const locationHelpModal = document.getElementById('location-help-modal');
+    const closeHelpModal = document.getElementById('close-help-modal');
+    const gotItBtn = document.getElementById('got-it-btn');
 
-    if (initialLat && initialLng) {
-        marker = L.marker([initialLat, initialLng]).addTo(map);
-        map.setView([initialLat, initialLng], 14);
-        updateLocationFeedback(initialLat, initialLng);
+    // Function to update location display
+    function updateLocationDisplay(lat, lng, accuracy = null) {
+        locationDisplay.textContent = `Latitude: ${lat.toFixed(6)}, Longitude: ${lng.toFixed(6)}`;
+        locationDisplay.className = 'text-green-600 font-medium';
+        
+        if (accuracy !== null) {
+            accuracyDisplay.textContent = `Accuracy: ±${Math.round(accuracy)} meters`;
+        } else {
+            accuracyDisplay.textContent = '';
+        }
     }
 
+    // Function to set location on map
+    function setLocation(lat, lng, accuracy = null) {
+        // Update form fields
+        latitudeField.value = lat;
+        longitudeField.value = lng;
+        
+        // Update display
+        updateLocationDisplay(lat, lng, accuracy);
+        
+        // Update map view (only zoom if we have good accuracy)
+        if (accuracy && accuracy < 1000) {
+            map.setView([lat, lng], 16);
+        } else if (!marker) {
+            map.setView([lat, lng], 16);
+        }
+        
+        // Update or create marker
+        if (marker) {
+            marker.setLatLng([lat, lng]);
+        } else {
+            // Create custom marker
+            const redIcon = L.divIcon({
+                className: 'location-marker',
+                html: '',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            });
+            
+            marker = L.marker([lat, lng], {icon: redIcon}).addTo(map)
+                .bindPopup(`
+                    <div class="text-sm">
+                        <strong>📍 Dumping Location</strong><br>
+                        Lat: ${lat.toFixed(6)}<br>
+                        Lng: ${lng.toFixed(6)}<br>
+                        ${accuracy ? `Accuracy: ±${Math.round(accuracy)}m` : ''}
+                    </div>
+                `)
+                .openPopup();
+        }
+        
+        // Add accuracy circle if available
+        if (accuracy && accuracy > 0) {
+            if (circle) {
+                circle.setLatLng([lat, lng]).setRadius(accuracy);
+            } else {
+                circle = L.circle([lat, lng], {
+                    radius: accuracy,
+                    color: '#3b82f6',
+                    fillColor: '#3b82f6',
+                    fillOpacity: 0.1,
+                    weight: 2,
+                    className: 'accuracy-circle'
+                }).addTo(map);
+            }
+        } else if (circle) {
+            map.removeLayer(circle);
+            circle = null;
+        }
+    }
+
+    // Handle map clicks
     map.on('click', function(e) {
-        if (marker) map.removeLayer(marker);
-        marker = L.marker(e.latlng).addTo(map);
-        document.getElementById('id_latitude').value = e.latlng.lat.toFixed(6);
-        document.getElementById('id_longitude').value = e.latlng.lng.toFixed(6);
-        updateLocationFeedback(e.latlng.lat, e.latlng.lng);
+        setLocation(e.latlng.lat, e.latlng.lng);
+        showLocationSuccess('Location selected! Click and drag the marker to adjust if needed.');
     });
 
-    function updateLocationFeedback(lat, lng) {
-        const feedback = document.getElementById('location-feedback');
-        feedback.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <div>
-                <p class="font-medium">Location selected</p>
-                <p class="text-sm mt-1">Latitude: ${lat.toFixed(6)}, Longitude: ${lng.toFixed(6)}</p>
+    // Handle search results
+    map.on('geosearch/showlocation', function(result) {
+        setLocation(result.location.y, result.location.x);
+        showLocationSuccess(`Location found: ${result.location.label}`);
+    });
+
+    // Use current location button
+    useCurrentLocationBtn.addEventListener('click', function() {
+        if (!navigator.geolocation) {
+            showLocationError('Geolocation is not supported by your browser. Please click on the map to select the location.');
+            return;
+        }
+
+        useCurrentLocationBtn.textContent = '🔄 Getting Location...';
+        useCurrentLocationBtn.disabled = true;
+        
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const accuracy = position.coords.accuracy;
+                
+                setLocation(lat, lng, accuracy);
+                
+                useCurrentLocationBtn.textContent = '📍 Use My Current Location';
+                useCurrentLocationBtn.disabled = false;
+                
+                showLocationSuccess('Location found successfully!');
+            },
+            function(error) {
+                let errorMessage = 'Unable to get your current location. ';
+                
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage = `
+                            📍 Location Access Denied
+                            <br><br>
+                            To use your current location:
+                            <ol class="list-decimal list-inside text-sm space-y-1">
+                                <li>Look for the location icon (📍) in your browser's address bar</li>
+                                <li>Click it and select "Allow" location access</li>
+                                <li>Refresh this page and try again</li>
+                            </ol>
+                            <br>
+                            <strong>Or simply click on the map to select the location manually!</strong>
+                        `;
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage = 'Location information is unavailable. Please click on the map to select the location manually.';
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage = 'Location request timed out. Please click on the map to select the location manually.';
+                        break;
+                    default:
+                        errorMessage = 'Please click on the map to select the location manually.';
+                        break;
+                }
+                
+                showLocationError(errorMessage);
+                useCurrentLocationBtn.textContent = '📍 Use My Current Location';
+                useCurrentLocationBtn.disabled = false;
+                
+                // Show help modal for permission issues
+                if (error.code === error.PERMISSION_DENIED) {
+                    setTimeout(() => {
+                        locationHelpModal.classList.remove('hidden');
+                        locationHelpModal.classList.add('flex');
+                    }, 1000);
+                }
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 300000
+            }
+        );
+    });
+
+    // Reset location button
+    resetLocationBtn.addEventListener('click', function() {
+        setLocation(defaultLat, defaultLng);
+        map.setView([defaultLat, defaultLng], defaultZoom);
+        showLocationInfo('Location reset to Kampala center');
+    });
+
+    // Location help button
+    locationHelpBtn.addEventListener('click', function() {
+        locationHelpModal.classList.remove('hidden');
+        locationHelpModal.classList.add('flex');
+    });
+
+    // Close modal events
+    closeHelpModal.addEventListener('click', function() {
+        locationHelpModal.classList.add('hidden');
+        locationHelpModal.classList.remove('flex');
+    });
+
+    gotItBtn.addEventListener('click', function() {
+        locationHelpModal.classList.add('hidden');
+        locationHelpModal.classList.remove('flex');
+    });
+
+    // Close modal when clicking outside
+    locationHelpModal.addEventListener('click', function(e) {
+        if (e.target === locationHelpModal) {
+            locationHelpModal.classList.add('hidden');
+            locationHelpModal.classList.remove('flex');
+        }
+    });
+
+    // Show location error as a nice alert
+    function showLocationError(message) {
+        showAlert(message, 'red');
+    }
+
+    function showLocationSuccess(message) {
+        showAlert(message, 'green');
+    }
+
+    function showLocationInfo(message) {
+        showAlert(message, 'blue');
+    }
+
+    function showAlert(message, color) {
+        // Remove existing alerts
+        document.querySelectorAll('.location-alert').forEach(alert => alert.remove());
+
+        const bgColor = {
+            'red': 'bg-red-100 border-red-400 text-red-700',
+            'green': 'bg-green-100 border-green-400 text-green-700',
+            'blue': 'bg-blue-100 border-blue-400 text-blue-700'
+        }[color];
+        
+        const icon = {
+            'red': '⚠️',
+            'green': '✅',
+            'blue': 'ℹ️'
+        }[color];
+
+        // Create alert div
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `location-alert fixed top-4 right-4 ${bgColor} border px-6 py-4 rounded-lg shadow-lg z-50 max-w-md transition-all duration-300`;
+        alertDiv.innerHTML = `
+            <div class="flex items-start">
+                <span class="text-lg mr-2 mt-0.5">${icon}</span>
+                <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                        <span class="font-medium">Location Service</span>
+                        <button class="ml-4 hover:opacity-70" onclick="this.parentElement.parentElement.parentElement.remove()">
+                            &times;
+                        </button>
+                    </div>
+                    <div class="mt-1 text-sm">${message}</div>
+                </div>
             </div>
         `;
-        feedback.className = 'p-3 bg-green-50 border border-green-100 rounded-lg text-green-800 text-sm flex items-start';
+        document.body.appendChild(alertDiv);
+        
+        // Auto-remove after 8 seconds for errors, 5 for others
+        const timeout = color === 'red' ? 8000 : 5000;
+        setTimeout(() => {
+            if (alertDiv.parentElement) {
+                alertDiv.style.opacity = '0';
+                alertDiv.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (alertDiv.parentElement) {
+                        alertDiv.remove();
+                    }
+                }, 300);
+            }
+        }, timeout);
+    }
+
+    // Form validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        if (!latitudeField.value || !longitudeField.value) {
+            e.preventDefault();
+            showLocationError('Please select a location on the map before submitting your report.');
+            // Scroll to map
+            document.getElementById('map').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+            return false;
+        }
+    });
+
+    // Set default location immediately
+    setLocation(defaultLat, defaultLng);
+
+    // Try to get user's current location on page load (non-blocking)
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const userLat = position.coords.latitude;
+                const userLng = position.coords.longitude;
+                const accuracy = position.coords.accuracy;
+                
+                // Only use if reasonably accurate and within Uganda
+                if (accuracy < 5000 && isWithinUganda(userLat, userLng)) {
+                    setLocation(userLat, userLng, accuracy);
+                    showLocationSuccess('Automatically detected your location!');
+                }
+            },
+            function(error) {
+                // Silent fail - just use default location
+                console.log('Auto-location failed, using default Kampala location');
+            },
+            {
+                enableHighAccuracy: false,
+                timeout: 3000, // Shorter timeout for page load
+                maximumAge: 60000
+            }
+        );
+    }
+
+    // Check if coordinates are within Uganda bounds
+    function isWithinUganda(lat, lng) {
+        return (-1.5 <= lat && lat <= 4.5 && 29.0 <= lng && lng <= 35.5);
     }
 });
 </script>
-
-<style>
-    .leaflet-container { 
-        z-index: 0;
-        font-family: inherit !important;
-    }
-    .leaflet-popup-content {
-        margin: 12px !important;
-    }
-    #upload-container:hover #upload-content svg {
-        transform: scale(1.1);
-        transition: transform 0.2s ease;
-    }
-    select {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-        background-position: right 0.5rem center;
-        background-repeat: no-repeat;
-        background-size: 1.5em 1.5em;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-    textarea {
-        min-height: 120px;
-        resize: vertical;
-    }
-</style>
 {% endblock %}

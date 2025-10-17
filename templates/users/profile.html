@@ -2,67 +2,158 @@
 {% load static %}
 
 {% block content %}
-<div class="min-h-screen bg-gradient-to-br from-green-50 to-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-3xl mx-auto">
-    <!-- Profile Card -->
-    <div class="bg-white rounded-xl shadow-2xl overflow-hidden">
-      <!-- Profile Header -->
-      <div class="bg-gradient-to-r from-green-600 to-green-500 py-8 px-6 text-center">
-        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
-          <i class="fas fa-user text-white text-3xl"></i>
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Profile Header -->
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+      <div class="bg-gradient-to-r from-green-600 to-green-500 py-12 px-8 text-center relative">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-10">
+          <div class="absolute top-4 left-4 w-8 h-8 bg-white rounded-full"></div>
+          <div class="absolute top-12 right-8 w-6 h-6 bg-white rounded-full"></div>
+          <div class="absolute bottom-8 left-12 w-10 h-10 bg-white rounded-full"></div>
         </div>
-        <h1 class="text-2xl font-bold text-white">{{ profile.user.username }}</h1>
-        <p class="text-green-100 mt-1">{{ profile.user_type|title }}</p>
+        
+        <div class="relative z-10">
+          <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-white bg-opacity-20 flex items-center justify-center border-4 border-white border-opacity-30">
+            <i class="fas fa-user text-white text-3xl"></i>
+          </div>
+          <h1 class="text-3xl font-bold text-white mb-2">{{ user.username }}</h1>
+          <p class="text-green-100 text-lg">
+            {% if profile.user_type %}
+              {{ profile.get_user_type_display }}
+            {% else %}
+              Community Member
+            {% endif %}
+          </p>
+          <div class="mt-4 inline-flex items-center bg-white bg-opacity-20 px-4 py-2 rounded-full">
+            <i class="fas fa-star text-yellow-300 mr-2"></i>
+            <span class="text-white font-medium">Active Member</span>
+          </div>
+        </div>
       </div>
 
-      <!-- Profile Details -->
+      <!-- Profile Content -->
       <div class="p-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- User Info -->
-          <div class="bg-gray-50 rounded-lg p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-              <i class="fas fa-id-card text-green-600 mr-2"></i> Basic Information
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <!-- Personal Information -->
+          <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+            <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+              <i class="fas fa-user-circle text-green-600 mr-3"></i>Personal Information
             </h2>
-            <div class="space-y-3">
-              <div>
-                <p class="text-sm text-gray-500">Username</p>
-                <p class="font-medium">{{ profile.user.username }}</p>
+            <div class="space-y-4">
+              <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                <span class="text-gray-600 font-medium">Username</span>
+                <span class="text-gray-800 font-semibold">{{ user.username }}</span>
               </div>
-              <div>
-                <p class="text-sm text-gray-500">User Type</p>
-                <p class="font-medium">{{ profile.user_type|title }}</p>
+              <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                <span class="text-gray-600 font-medium">Email</span>
+                <span class="text-gray-800 font-semibold">{{ user.email|default:"Not provided" }}</span>
+              </div>
+              <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                <span class="text-gray-600 font-medium">User Type</span>
+                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium capitalize">
+                  {{ profile.get_user_type_display|default:"Not specified" }}
+                </span>
+              </div>
+              <div class="flex justify-between items-center py-3">
+                <span class="text-gray-600 font-medium">Member Since</span>
+                <span class="text-gray-800 font-semibold">{{ user.date_joined|date:"M d, Y" }}</span>
               </div>
             </div>
           </div>
 
-          <!-- Contact Info -->
-          <div class="bg-gray-50 rounded-lg p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-              <i class="fas fa-map-marker-alt text-green-600 mr-2"></i> Contact Details
+          <!-- Contact & Location -->
+          <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+            <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+              <i class="fas fa-map-marker-alt text-blue-600 mr-3"></i>Location & Contact
             </h2>
-            <div class="space-y-3">
-              <div>
-                <p class="text-sm text-gray-500">Location</p>
-                <p class="font-medium">{{ profile.location|default:"Not specified" }}</p>
+            <div class="space-y-4">
+              <div class="flex items-start py-3 border-b border-gray-200">
+                <i class="fas fa-location-dot text-gray-400 mt-1 mr-3"></i>
+                <div>
+                  <div class="text-gray-600 font-medium">Location</div>
+                  <div class="text-gray-800 font-semibold">
+                    {{ profile.location|default:"Not specified" }}
+                  </div>
+                </div>
               </div>
-              <div>
-                <p class="text-sm text-gray-500">Contact</p>
-                <p class="font-medium">{{ profile.contact|default:"Not specified" }}</p>
+              <div class="flex items-start py-3 border-b border-gray-200">
+                <i class="fas fa-phone text-gray-400 mt-1 mr-3"></i>
+                <div>
+                  <div class="text-gray-600 font-medium">Contact</div>
+                  <div class="text-gray-800 font-semibold">
+                    {{ profile.contact|default:"Not provided" }}
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-start py-3">
+                <i class="fas fa-recycle text-gray-400 mt-1 mr-3"></i>
+                <div>
+                  <div class="text-gray-600 font-medium">Waste Types</div>
+                  <div class="text-gray-800 font-semibold">
+                    {% if profile.accepted_waste_types %}
+                      {{ profile.accepted_waste_types|truncatewords:8 }}
+                    {% else %}
+                      Not specified
+                    {% endif %}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Edit Button -->
-        <div class="mt-8 text-center">
-          <a href="#" class="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-md transition duration-300">
-            <i class="fas fa-user-edit mr-2"></i> Edit Profile
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="{% url 'profile_edit' %}" 
+             class="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
+            <i class="fas fa-user-edit mr-3"></i>Edit Profile
           </a>
+          
+          {% if is_quick_access %}
+          <a href="{% url 'quick_dashboard' %}" 
+             class="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
+            <i class="fas fa-tachometer-alt mr-3"></i>Quick Dashboard
+          </a>
+          {% else %}
+          <a href="{% url 'waste_listing_create' %}" 
+             class="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
+            <i class="fas fa-plus-circle mr-3"></i>Create Listing
+          </a>
+          {% endif %}
         </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-xl p-6 shadow-lg text-center">
+        <div class="w-12 h-12 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+          <i class="fas fa-list-alt text-green-600 text-xl"></i>
+        </div>
+        <div class="text-2xl font-bold text-gray-800">5</div>
+        <div class="text-gray-600">Active Listings</div>
+      </div>
+      <div class="bg-white rounded-xl p-6 shadow-lg text-center">
+        <div class="w-12 h-12 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+          <i class="fas fa-handshake text-blue-600 text-xl"></i>
+        </div>
+        <div class="text-2xl font-bold text-gray-800">12</div>
+        <div class="text-gray-600">Successful Matches</div>
+      </div>
+      <div class="bg-white rounded-xl p-6 shadow-lg text-center">
+        <div class="w-12 h-12 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center">
+          <i class="fas fa-calendar-check text-purple-600 text-xl"></i>
+        </div>
+        <div class="text-2xl font-bold text-gray-800">30</div>
+        <div class="text-gray-600">Days Active</div>
       </div>
     </div>
   </div>
 </div>
 
+<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 {% endblock %}
