@@ -43,7 +43,14 @@ class DumpingReport(models.Model):
         ('medical', 'Medical'),
     ]
     
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    # Make user optional for anonymous reports
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    
+    # Add fields for anonymous reporting
+    reporter_name = models.CharField(max_length=100, blank=True, null=True)
+    reporter_email = models.EmailField(blank=True, null=True)
+    reporter_phone = models.CharField(max_length=15, blank=True, null=True)
+    
     photo = models.ImageField(upload_to='reports/')
     waste_type = models.CharField(max_length=20, choices=WASTE_TYPES)
     latitude = models.FloatField()
@@ -53,11 +60,15 @@ class DumpingReport(models.Model):
     district = models.CharField(
         max_length=50,
         choices=UGANDA_DISTRICTS,
-        default='Kampala'  # ✅ Default value for existing data
+        default='Kampala'
     )
     
     def __str__(self):
-        return f"Report #{self.id} - {self.get_district_display()}"
+        user_info = self.reporter_name or f"User #{self.user.id}" if self.user else "Anonymous"
+        return f"Report #{self.id} - {self.get_district_display()} by {user_info}"
+
+    def is_anonymous(self):
+        return self.user is None
 
     def save(self, *args, **kwargs):
         if not self.district:

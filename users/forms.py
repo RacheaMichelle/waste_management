@@ -95,3 +95,25 @@ class QuickRegisterForm(UserCreationForm):
         profile.contact = self.cleaned_data.get('contact') or None
         profile.save()
         return user
+
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['user_type', 'location', 'contact', 'accepted_waste_types']
+        widgets = {
+            'user_type': forms.Select(attrs={
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200'
+            }),
+            'location': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200',
+                'placeholder': 'Enter your location'
+            }),
+            'contact': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200',
+                'placeholder': '+256 XXX XXX XXX'
+            }),
+            'accepted_waste_types': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200',
+                'placeholder': 'Plastic, Paper, Glass, etc.'
+            }),
+        }

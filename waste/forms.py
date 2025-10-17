@@ -6,26 +6,37 @@ class WasteListingForm(forms.ModelForm):
         model = WasteListing
         fields = ['waste_type', 'quantity', 'description', 'location', 'image']
         widgets = {
-            'waste_type': forms.Select(attrs={'class': 'form-control'}),
-            'quantity': forms.TextInput(attrs={
-                'placeholder': 'e.g., 2 heaps, 5 sacks',
-                'class': 'form-control'
+            'waste_type': forms.Select(attrs={
+                'class': 'form-input',
+                'placeholder': 'Select waste type'
             }),
-            'description': forms.TextInput(attrs={
-                'placeholder': 'Additional details (e.g., color, condition)',
-                'class': 'form-control'
+            'quantity': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'e.g., 5 kg, 10 bags, 1 truckload'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-input',
+                'placeholder': 'Describe your waste material...',
+                'rows': 4
             }),
             'location': forms.TextInput(attrs={
-                'placeholder': 'e.g., Kampala',
-                'class': 'form-control'
+                'class': 'form-input',
+                'placeholder': 'Enter your location'
             }),
-            'image': forms.FileInput(attrs={'class': 'form-control'}),
+            'image': forms.FileInput(attrs={
+                'class': 'hidden',
+                'accept': 'image/*'
+            })
         }
-
+    
     def clean_quantity(self):
-        quantity = self.cleaned_data.get('quantity', '').strip()
-        if quantity:
-            parts = quantity.split()
-            if len(parts) < 2 or not parts[0].replace('.', '').isdigit():
-                raise forms.ValidationError("Please enter a quantity with a unit (e.g., '2 heaps', '5 sacks').")
+        quantity = self.cleaned_data.get('quantity')
+        if quantity and len(quantity) < 2:
+            raise forms.ValidationError("Please provide a valid quantity description.")
         return quantity
+    
+    def clean_location(self):
+        location = self.cleaned_data.get('location')
+        if location and len(location) < 3:
+            raise forms.ValidationError("Please provide a valid location.")
+        return location
