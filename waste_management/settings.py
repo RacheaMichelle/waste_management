@@ -1,23 +1,28 @@
-"""
-Django settings for waste_management project.
-"""
+# waste_management/settings.py
 
-from pathlib import Path
 import os
+from pathlib import Path
 import dj_database_url
 
 # Build paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Security
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key-change-in-production')
-DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
+# Security - Critical for production
+SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-secret-key-change-in-production')
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = [
     'localhost',
-    '127.0.0.1',
+    '127.0.0.1', 
     '.vercel.app',
     '.now.sh',
+    'waste-management-sandy.vercel.app',
+]
+
+# Add CSRF trusted origins
+CSRF_TRUSTED_ORIGINS = [
+    'https://waste-management-sandy.vercel.app',
+    'https://*.vercel.app'
 ]
 
 # Application definition
@@ -54,48 +59,59 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'waste_management.urls'
 
-# ASGI for Django Channels
+# ASGI Configuration
 ASGI_APPLICATION = 'waste_management.asgi.application'
 
-# Redis Configuration - FIXED
+# Database Configuration - Critical Fix
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL and DATABASE_URL.startswith('postgresql://'):
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True
+        )
+    }
+else:
+    # Fallback to SQLite for local development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
+# Redis Configuration - Simplified for Vercel
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 
-# Email Configuration
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'rachealnannozi77@gmail.com'
-EMAIL_HOST_PASSWORD = 'iaegpsdmhisbhwfp'
-DEFAULT_FROM_EMAIL = 'rachealnannozi77@gmail.com'
-
-# FIXED: Channel layers with simplified Redis configuration
+# Use in-memory channel layer for Vercel (Redis might not work well on Vercel)
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [(REDIS_URL)],
-        },
-    },
-}
-
-# FIXED: Cache configuration - Remove problematic SSL options
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            # Remove SSL options for local development
-            # "SSL_CERT_REQS": None,
-        }
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
 }
 
-# FIXED: Use database sessions instead of cache sessions to avoid Redis issues
-SESSION_ENGINE = "django.contrib.sessions.backends.db"  # Changed from cache to db
-# SESSION_CACHE_ALIAS = "default"  # Comment out or remove this line
+# Session configuration - Use database sessions
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
+# Static files configuration
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Ensure directories exist
+os.makedirs(BASE_DIR / 'static', exist_ok=True)
+os.makedirs(BASE_DIR / 'staticfiles', exist_ok=True)
+
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -111,40 +127,6 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = 'waste_management.wsgi.application'
-
-# Database Configuration
-DATABASE_URL = os.environ.get('DATABASE_URL')
-
-if DATABASE_URL:
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            ssl_require=True
-        )
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-
-# Static files
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-# Make sure these directories exist
-os.makedirs(BASE_DIR / 'static', exist_ok=True)
-os.makedirs(BASE_DIR / 'staticfiles', exist_ok=True)
-
-# Media files
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -170,7 +152,17 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Authentication
+# Authentication URLs
 LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+# Email configuration (optional)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Security settings for production
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
