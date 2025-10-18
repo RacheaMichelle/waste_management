@@ -1,10 +1,14 @@
 #!/bin/bash
+# build_files.sh
 
-# Install Python dependencies
+# Install dependencies
 pip install -r requirements.txt
 
 # Collect static files
 python manage.py collectstatic --noinput
 
-# Make the build script executable
-chmod +x build_files.sh
+# Run migrations
+python manage.py migrate
+
+# Make sure the script exits successfully
+echo "Build completed successfully"
